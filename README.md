@@ -34,7 +34,28 @@ If you want to see the 3D biological visualizations without having to chat with 
 2. Open [`test.html`](file:///Users/keshavsharma/basalt/deepsleep-hub/test.html) in your browser.
 3. Open the **Semantic Visualization** (`brain.html`) in a second tab via the extension popup.
 4. Keep both tabs visible. Click the **"Generate Fake AI Thoughts"** buttons in the `test.html` tab.
-5. In real-time, watch your `brain.html` populates with concepts and neural edges.
+5. Watch in real-time as your `brain.html` populates with concepts and neural edges.
+
+---
+
+## 📖 How to Use
+
+Once the extension is loaded, the engine works **automatically**. You don't need to manually sync anything.
+
+1.  **Chat Normally**: Go to ChatGPT, Claude, or Gemini and talk to your AI assistants. The extension silently extracts knowledge fragments in the background.
+2.  **Open the Cortex**: Click the DeepSleep icon in your toolbar and select **"Enter Semantic Visualization"**.
+3.  **Explore the Brain**:
+    *   **Drag**: Rotate the biological model to explore differnet clusters.
+    *   **Zoom**: Scroll to dive through 4 levels of depth—from the macro structure down to individual knowledge nodes.
+    *   **Trace (Right-Click)**: Right-click any node to reveal the exact context and LLM history that generated that specific thought.
+4.  **Model Continuity**: Switch between assistants! The brain will bridge the context between GPT-4, Claude, and Gemini into one unified neural map.
+
+---
+
+## 🔒 Privacy & Safety
+- **100% Local**: All data is stored in your browser's IndexedDB. 
+- **No External Servers**: Your chat history never leaves your machine.
+- **Model Agnostic**: Works across any supported LLM platform.
 
 ## Architecture
 
@@ -42,10 +63,3 @@ If you want to see the 3D biological visualizations without having to chat with 
 2. **Semantic Knowledge Engine**: A background worker determines Concepts and Relationships using Regex patterns.
 3. **Graph Storage**: An IndexedDB implementation wrapped by `Dexie.js` persistently holds all nodes (Concepts) and edges (Relationships).
 4. **The Visual Brain**: A hybrid WebGL application merging high-fidelity biological lobe meshes and advanced Three.js atmospheric effects.
-
-## Supported Platforms
-- **ChatGPT**: White Frontal Lobe
-- **Claude**: Orange Temporal Lobe
-- **Gemini**: Purple Occipital Lobe
-- **Kimi**: Red Cerebellum Lobe
-- **DeepSleep-Beta**: Gold Hippocampus Core
