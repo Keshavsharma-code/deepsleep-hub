@@ -1,6 +1,11 @@
+# DeepSleep-Hub (v2.0)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/Version-1.5--stable-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
+[![Extension](https://img.shields.io/badge/Manifest-V3-orange.svg)](manifest.json)
+[![Visuals](https://img.shields.io/badge/Engine-Three.js-lightgrey.svg)](https://threejs.org)
+
 ![DeepSleep High-Fidelity Clusters](docs/visual_brain.png)
 
-# DeepSleep-Hub (v2.0)
 ## The First Model-Agnostic AI Memory Layer
 
 **Assistants change. Your context doesn't.**
