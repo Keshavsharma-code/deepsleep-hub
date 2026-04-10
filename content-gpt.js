@@ -20,6 +20,8 @@
     return JSON.stringify(messages.slice(-10)); // Last 10 exchanges
   }
   
+  const queue = new window.BatchedMessageQueue(5, 2000);
+  
   function initObserver() {
     const observer = new MutationObserver((mutations) => {
       const responses = document.querySelectorAll('[data-message-author-role="assistant"]');
@@ -31,8 +33,7 @@
         if (text && text.length > 20) {
           const fullChat = extractFullChat();
           
-          chrome.runtime.sendMessage({
-            type: 'CAPTURE_THOUGHT',
+          queue.push({
             ai: 'openai',
             content: text.substring(0, 500),
             fullLog: fullChat

@@ -20,6 +20,8 @@
     return JSON.stringify(messages.slice(-10));
   }
   
+  const queue = new window.BatchedMessageQueue(5, 2000);
+
   function init() {
     const observer = new MutationObserver((mutations) => {
       const responses = document.querySelectorAll('.font-claude-message, [class*="message"]');
@@ -32,8 +34,7 @@
           if (text && text.length > 20) {
             const fullChat = extractFullChat();
             
-            chrome.runtime.sendMessage({
-              type: 'CAPTURE_THOUGHT',
+            queue.push({
               ai: 'claude',
               content: text.substring(0, 500),
               fullLog: fullChat

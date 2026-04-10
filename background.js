@@ -1,11 +1,23 @@
 import { GraphDB } from './db.js';
 import { KnowledgeExtractor } from './extractor.js';
 
+// Keep-alive heartbeat (MV3 Service Worker persistence)
+chrome.alarms.create('deepsleep_pulse', { periodInMinutes: 4.5 });
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === 'deepsleep_pulse') {
+    console.log('🧠 DeepSleep Pulse: Service Worker is active.');
+  }
+});
+
 chrome.runtime?.onMessage?.addListener((request, sender, sendResponse) => {
   if (request.type === 'CAPTURE_THOUGHT') {
     processThoughtAsync(request.ai, request.content, request.fullLog)
       .then(() => sendResponse({success: true}))
-      .catch(err => sendResponse({success: false, error: err.message}));
+      .catch(err => {
+          console.error('[Background] Capture failed:', err);
+          sendResponse({success: false, error: err.message});
+      });
     return true; 
   }
 });
@@ -45,7 +57,7 @@ async function processThoughtAsync(ai, content, fullLog) {
   }
 
   // Notify any open brain UI
-  chrome.tabs.query({url: chrome.runtime.getURL('brain.html')}, (tabs) => {
+  chrome.tabs.query({url: chrome.runtime.getURL('brain.html') + '*'}, (tabs) => {
     tabs.forEach(tab => {
       chrome.tabs.sendMessage(tab.id, {
         type: 'NEW_THOUGHT',
@@ -57,3 +69,18 @@ async function processThoughtAsync(ai, content, fullLog) {
     });
   });
 }
+
+// Reconnection logic for content scripts after update
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.tabs.query({ url: ['*://chat.openai.com/*', '*://claude.ai/*', '*://gemini.google.com/*'] }, (tabs) => {
+        tabs.forEach(tab => {
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: () => {
+                    console.log('[DeepSleep] Extension updated. Reconnecting observers...');
+                    window.location.reload();
+                }
+            }).catch(e => console.warn('[Background] Auto-reload failed for tab:', tab.id, e));
+        });
+    });
+});

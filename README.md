@@ -12,6 +12,14 @@
 ## 🧠 Why DeepSleep-Hub?
 Assistants change. Your context shouldn't. DeepSleep-Hub unifies every AI interaction into a single, pulsing biological map. It’s not just an extension; it’s a **Second Brain with Chromatic Aberration.**
 
+## 🚀 New in v2.0: Production Hardening
+We have completely re-engineered the core for industrial-strength reliability:
+- **IndexedDB Reliability (Dexie.js)**: Full schema versioning and ACID transactions.
+- **Quota Management**: Proactive storage monitoring with LRU eviction to prevent browser crashes.
+- **MV3 Lifecycle Persistence**: Service Worker pulse-checks ensure the memory layer never sleeps.
+- **Message Batching**: Debounced thought-capture prevents browser messaging overhead even during rapid chats.
+- **Offline-First**: Zero external dependencies. All 3D assets and libraries are bundled locally.
+
 **Assistants change. Your context doesn't.**
 
 DeepSleep-Hub is a coordinate-free, cinematic knowledge bridge that ensures your AI mental map persists across **ChatGPT, Claude, Gemini, and Local Llama**. It acts as the "connective tissue" for your digital intelligence—so when you switch from debugging with Claude to local reasoning with Llama, your neural interface already holds the relevant codebase context.
