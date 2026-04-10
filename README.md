@@ -1,9 +1,13 @@
+![DeepSleep High-Fidelity Clusters](docs/visual_brain.png)
+
 # DeepSleep-Hub (v2.0)
 ## The First Model-Agnostic AI Memory Layer
 
 **Assistants change. Your context doesn't.**
 
 DeepSleep-Hub is a coordinate-free, cinematic knowledge bridge that ensures your AI mental map persists across **ChatGPT, Claude, Gemini, and Local Llama**. It acts as the "connective tissue" for your digital intelligence—so when you switch from debugging with Claude to local reasoning with Llama, your neural interface already holds the relevant codebase context.
+
+![DeepSleep Cognitive Bridge Workflow](docs/cognitive_bridge.png)
 
 ## 🚀 Quickstart: Installation
 
@@ -28,6 +32,8 @@ Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deploy
 
 ---
 
+![DeepSleep Technical Data Architecture](docs/technical_flow.png)
+
 ## 🧪 Simulation Mode (No AI Required)
 If you want to see the 3D biological visualizations without having to chat with a real LLM:
 1. Load the extension as shown above.
@@ -51,6 +57,8 @@ Once the extension is loaded, the engine works **automatically**. You don't need
 4.  **Model Continuity**: Switch between assistants! The brain will bridge the context between GPT-4, Claude, and Gemini into one unified neural map.
 
 ---
+
+![DeepSleep User Journey](docs/user_journey.png)
 
 ## 🔒 Privacy & Safety
 - **100% Local**: All data is stored in your browser's IndexedDB. 
