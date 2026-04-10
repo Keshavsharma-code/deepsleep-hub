@@ -1,7 +1,7 @@
 import { GraphDB } from './db.js';
 import { KnowledgeExtractor } from './extractor.js';
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime?.onMessage?.addListener((request, sender, sendResponse) => {
   if (request.type === 'CAPTURE_THOUGHT') {
     processThoughtAsync(request.ai, request.content, request.fullLog)
       .then(() => sendResponse({success: true}))

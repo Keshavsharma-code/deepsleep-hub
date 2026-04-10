@@ -16,7 +16,8 @@ body {
   height: 100vh; 
   position: absolute;
   top: 0; left: 0; z-index: 10;
-  background: transparent;
+  /* Make invisible so Three.js renders beneath it, but keep it clickable for headless layout dragging! */
+  opacity: 0;
 }
 .thought {
   margin-bottom: 12px;
