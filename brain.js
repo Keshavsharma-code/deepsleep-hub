@@ -54,20 +54,23 @@ function init() {
     controls.autoRotateSpeed = 0.5; // Spins slowly by itself but stops when you grab it!
 
     const renderScene = new THREE.RenderPass(scene, camera);
-    const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-    bloomPass.strength = 1.2;
+    const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.0, 0.4, 0.85);
+    bloomPass.strength = 1.8;
 
     composer = new THREE.EffectComposer(renderer);
     composer.addPass(renderScene);
     composer.addPass(bloomPass);
 
-    scene.add(new THREE.AmbientLight(0x404040, 2));
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+    scene.add(new THREE.AmbientLight(0x404040, 4));
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
     directionalLight.position.set(10, 20, 10);
     scene.add(directionalLight);
 
     brainGroup = new THREE.Group();
     scene.add(brainGroup);
+
+    // 0. CREATE NEURAL STARFIELD (Depth & Scale)
+    createStarfield();
 
     // 1. CREATE BIOLOGICAL MESH LOBES
     createBiologicalBrain();
@@ -125,7 +128,7 @@ function createBiologicalBrain() {
     const lobe = new THREE.Mesh(geometry, material);
     lobe.position.set(...config.pos);
     lobe.scale.setScalar(config.scale);
-    lobe.userData = { isLobe: true, ai: config.ai, name: config.name };
+    lobe.userData = { isLobe: true, ai: config.ai, name: config.name, scaleBase: config.scale };
     
     // Macro Label
     if (labelsContainer) {
@@ -156,6 +159,30 @@ function createBiologicalBrain() {
         logicalLobes[config.ai].push(lobe);
     }
   });
+}
+
+function createStarfield() {
+  const geometry = new THREE.BufferGeometry();
+  const vertices = [];
+  for (let i = 0; i < 2000; i++) {
+    vertices.push(
+      THREE.MathUtils.randFloatSpread(500),
+      THREE.MathUtils.randFloatSpread(500),
+      THREE.MathUtils.randFloatSpread(500)
+    );
+  }
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+  const material = new THREE.PointsMaterial({ color: 0x444466, size: 0.7, transparent: true, opacity: 0.5 });
+  const stars = new THREE.Points(geometry, material);
+  scene.add(stars);
+  
+  // Slow background drift
+  function rotateStars() {
+    stars.rotation.y += 0.0001;
+    stars.rotation.x += 0.00005;
+    requestAnimationFrame(rotateStars);
+  }
+  rotateStars();
 }
 
 function createThoughtNode(ai, text, concept) {
@@ -426,6 +453,18 @@ function animate() {
 
   const time = Date.now() * 0.001;
   const globalDist = camera.position.length();
+
+  // Bio-rhythmic Pulse (Lobe Breathing)
+  Object.values(logicalLobes).flat().forEach((lobe, idx) => {
+    // Breathing scale: 1.0 to 1.05
+    const breathe = 1 + Math.sin(time * 0.5 + idx) * 0.03;
+    lobe.scale.setScalar(breathe * (lobe.userData.scaleBase || 1.0));
+    
+    // Glowing pulse: 0.1 to 0.4
+    if (lobe.material.emissive) {
+       lobe.material.emissiveIntensity = 0.2 + Math.sin(time + idx) * 0.15;
+    }
+  });
 
   thoughtNodes.forEach((node, i) => {
     node.position.y += Math.sin(time * 2 + i) * 0.02;
