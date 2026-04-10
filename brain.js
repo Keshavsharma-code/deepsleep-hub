@@ -360,20 +360,18 @@ function addThoughtToUI(ai, concept, color) {
   
   const aiName = AI_CONFIG[ai]?.name || ai;
   div.innerHTML = `
-    <div style="display: flex; align-items: center; margin-bottom: 4px;">
-      <span class="ai-orb" style="background: #${color.toString(16).padStart(6, '0')};"></span>
-      <span style="font-size: 10px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px;">${aiName}</span>
-    </div>
-    <div style="font-weight: 500;">${concept}</div>
+    <div class="thought-ai">${aiName}</div>
+    <div class="thought-text">${concept}</div>
   `;
   
   container.insertBefore(div, container.firstChild);
   
   // Keep only last 10
-  while (container.children.length > 10) {
+  while (container.children.length > 8) {
     container.removeChild(container.lastChild);
   }
 }
+
 
 function updateNeuralPressure() {
   const count = thoughtNodes.length;
