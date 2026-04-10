@@ -378,20 +378,34 @@ window.addEventListener('keydown', (e) => {
 function onRightClick(event) {
   event.preventDefault();
   if (!isInitialized) return;
+  
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(thoughtNodes);
   
+  const overlay = document.getElementById('trace-overlay');
   if (intersects.length > 0) {
       const node = intersects[0].object;
-      alert(`[SYSTEM] Accessing origin chat for trace ID ${node.id}...\nSource LLM: ${node.userData.ai.toUpperCase()}\nText Context: "${node.userData.text}"`);
+      const data = node.userData;
+      
+      document.getElementById('trace-ai-type').innerText = data.ai.toUpperCase();
+      document.getElementById('trace-ai-type').style.color = '#' + AI_CONFIG[data.ai]?.color.toString(16).padStart(6, '0');
+      document.getElementById('trace-content').innerText = data.text || "No context data available for this node.";
+      document.getElementById('trace-node-id').innerText = node.id;
+      document.getElementById('trace-lobe').innerText = (data.concept || "UNKNOWN").toUpperCase();
+      
+      overlay.classList.add('active');
   } else {
-      const lobeIntersects = raycaster.intersectObjects(Object.values(logicalLobes).flat());
-      if (lobeIntersects.length > 0) {
-         const lobe = lobeIntersects[0].object;
-         alert(`[SYSTEM] Inspecting macro region.\nStructural Domain: ${lobe.userData.name.toUpperCase()}\nHost Architecture: ${lobe.userData.ai.toUpperCase()}`);
-      }
+      overlay.classList.remove('active');
   }
 }
+
+// Close overlay on left click elsewhere
+window.addEventListener('mousedown', (e) => {
+    const overlay = document.getElementById('trace-overlay');
+    if (e.button === 0 && !overlay.contains(e.target)) {
+        overlay.classList.remove('active');
+    }
+});
 
 window.addEventListener('contextmenu', onRightClick);
 

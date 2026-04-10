@@ -299,6 +299,62 @@
       font-weight: 600;
       z-index: 100;
     }
+
+    #trace-overlay {
+      position: absolute;
+      bottom: 100px;
+      right: 440px;
+      width: 400px;
+      background: rgba(10, 10, 14, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 50;
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #trace-overlay.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .trace-header {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .trace-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #f1f5f9;
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+    }
+
+    .trace-content::-webkit-scrollbar { width: 3px; }
+    .trace-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+
+    .trace-ai-pill {
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
   </style>
 </head>
 
@@ -366,6 +422,19 @@
       </div>
     </div>
 
+  </div>
+
+  <div id="trace-overlay">
+    <div class="trace-header">
+      <span>Neural Trace Origin</span>
+      <span class="trace-ai-pill" id="trace-ai-type">GPT-4</span>
+    </div>
+    <div class="trace-content" id="trace-content">
+      Right-click a node to inspect its specific semantic origin and extracted context.
+    </div>
+    <div style="font-size: 9px; color: #64748b; letter-spacing: 0.5px;">
+      SYSTEM_ID: <span id="trace-node-id">0000</span> | MAPPED_TO: <span id="trace-lobe">CENTRAL_CORE</span>
+    </div>
   </div>
 
   <div class="panel bottom-bar" style="pointer-events: auto;">
