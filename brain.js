@@ -47,6 +47,10 @@ function init() {
     controls.dampingFactor = 0.05;
     controls.minDistance = 5;
     controls.maxDistance = 200;
+    controls.enablePan = true; // Allow moving the brain left/right/up/down
+    controls.panSpeed = 1.0;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.5; // Spins slowly by itself but stops when you grab it!
 
     const renderScene = new THREE.RenderPass(scene, camera);
     const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
@@ -333,10 +337,6 @@ function animate() {
   if (!isInitialized) return;
   
   controls.update();
-
-  if (brainGroup) {
-    brainGroup.rotation.y += 0.0005;
-  }
 
   const time = Date.now() * 0.001;
   thoughtNodes.forEach((node, i) => {
