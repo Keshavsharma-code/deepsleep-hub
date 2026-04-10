@@ -1,57 +1,38 @@
-# DeepSleep-Hub MVP (V2)
+# DeepSleep-Hub 🧠
 
-The **Universal AI Memory Brain**. A browser extension that coordinates, extracts, and visualizes a Semantic Knowledge Graph consisting of memories and concepts processed across ChatGPT, Claude, Gemini, and Kimi.
+Welcome to **DeepSleep Hub**, the ultimate UI extension concept that takes semantic node graphs and throws them into a stunning, cinematic WebGL Neural Interface.
 
-*"Think Minority Report meets biological neural network."*
+![Neural Image Example](./icons/icon-128.png)
 
-## Architecture
+## What is this?
+This is a conceptual, interactive, fully functioning local HTML mock-up of an AI memory graph. It visualizes thoughts—representing data from various AI sources like Claude, ChatGPT, Gemini, and Kimi—as glowing synapses connecting in a 360-view 3D space. 
 
-DeepSleep-Hub is not just a toy sphere visualizer—it's a functioning Knowledge Graph operating completely locally within your browser. 
+It tracks memory, graphs concepts in real-time space, and lets you inject nodes.
 
-1. **Extraction Layer**: Content scripts intercept AI conversations in real-time, sending chunks to a background Service Worker.
-2. **Semantic Knowledge Engine**: A background worker determines Concepts and Relationships using Regex patterns (and optionally `transformers.js` via the pipeline).
-3. **Graph Storage**: An IndexedDB implementation wrapped by `Dexie.js` persistently holds all nodes (Concepts), edges (Relationships), calculating *PageRank* metrics to define node scale.
-4. **The Visual Brain**: A hybrid WebGL application merging the physics-directed layout of `Cytoscape.js` (with Cola layout) and advanced visual overlays using `Three.js` (rendering neural bloom filters, dream mist particles, and active lightning animations).
+## The Dumbest Guide to Running It 🚀
 
-## Supported Platforms (Automatic Injection)
-- **ChatGPT**: `#ffffff` (White Frontal Lobe)
-- **Claude**: `#f97316` (Orange Temporal Lobe)
-- **Gemini**: `#a855f7` (Purple Occipital Lobe)
-- **Kimi**: `#ef4444` (Red Cerebellum Lobe)
-- **DeepSleep-Beta**: `#fbbf24` (Gold Hippocampus Dream Mode)
+You don't need databases, servers, or Chrome Extensions. You can run this purely in your browser by opening the HTML file!
 
----
+### Step 1: Open it
+Locate the `brain.html` file in the folder you downloaded/cloned.
+Double-click it, or drag and drop it directly into your web browser (Chrome, Edge, Arc, Firefox).
 
-## How to Install & Use
+*(You literally just need to open `brain.html` in your browser)*
 
-### 1. Installation
-Because DeepSleep-Hub is a bleeding-edge extension, you install it natively in Chrome Developer Mode:
-1. Open Google Chrome.
-2. Go to `chrome://extensions/` in your URL bar.
-3. Toggle **Developer mode** on (top right corner).
-4. Click **Load unpacked** (top left).
-5. Select the `deepsleep-hub` folder containing the code.
-6. The Neural Brain icon should now appear in your browser's toolbar.
+### Step 2: Use the Simulation
+Once it opens, you are looking at the **Neural Engine**. It will automatically spawn a few nodes to show you what it does.
 
-### 2. General Usage
-Once loaded, DeepSleep-Hub silently monitors supported platforms in the background.
+- **Zoom**: Scroll your mouse wheel up and down to dive *deep* into the neurons.
+- **Rotate**: Click and drag your mouse across the background to spin the entire 360D brain on its axis.
+- **Inspect**: Hover over any glowing node to highlight it. You will see its text label. Click on a node to read the heavy text inside it.
 
-1. Click the DeepSleep-Hub icon in your browser toolbar to open the Popup.
-2. Click **Enter Semantic Visualization** to launch `brain.html` in a new tab. This is your personal visual cortex.
-3. Open a new window, go to ChatGPT (or Claude/Gemini), and chat. 
-4. Switch back to your visual cortex window (`brain.html`)—you will see new Concepts spontaneously appear on the graphical canvas alongside connection nodes and dynamic particle effects.
+### Step 3: Trigger Thoughts
+Look at the bottom left. You will see colored pill buttons for **GPT**, **CODEX**, **CLAUDE**, **GEMINI**, etc.
+Click them! 
 
----
+Every time you click, you are manually triggering the extension to simulate reading a response from that AI. A new node will geometrically spawn, shoot out an ink splat explosion, and draw a synapse line connecting itself back to the core memory cluster! 
 
-## 🧪 Testing Locally (Without an AI Account)
+### Step 4: Hide the UI
+Want to just look at the gorgeous 3D network floating in space without the panels in the way? Click **MINIMIZE UI ⌘** in the top right corner. The UI will vanish, allowing you to fly the camera straight through the glowing WebGL synapse network!
 
-If you just want to see the 3D biological visualizations in action without generating 30 real-world RAG queries to Claude, you can use the included `sandbox.html`!
-
-1. Load the extension in Chrome.
-2. Open the file `test.html` in your browser. (e.g., File -> Open File -> `test.html`).
-3. Open `brain.html` via the Extension Popup in a **second tab**.
-4. Inside the `test.html` tab, freely mash the "Generate Fake AI Thoughts" buttons.
-5. In real-time, watch your `brain.html` explode with graph nodes, relationships, and specialized "Dream Mode" particle effects across the screen.
-
-### The "Dream Mode"
-When a node is generated by the DeepSleep-Beta integration (the gold button in testing), the extension applies a highly customized Three.js physical override. The node will emit golden mist, rotate autonomously, throb with light, and showcase sleeping symbols—all seamlessly tracked alongside normal geometric layout graph nodes.
+Enjoy the Semantic Neural Engine UI!
