@@ -4,9 +4,13 @@
 [![Extension](https://img.shields.io/badge/Manifest-V3-orange.svg)](manifest.json)
 [![Visuals](https://img.shields.io/badge/Engine-Three.js-lightgrey.svg)](https://threejs.org)
 
+# Stop Forgetting your AI's Intelligence.
+### The first cinematic 3D memory layer for ChatGPT, Claude, and Gemini.
+
 ![DeepSleep High-Fidelity Clusters](docs/visual_brain.png)
 
-## The First Model-Agnostic AI Memory Layer
+## 🧠 Why DeepSleep-Hub?
+Assistants change. Your context shouldn't. DeepSleep-Hub unifies every AI interaction into a single, pulsing biological map. It’s not just an extension; it’s a **Second Brain with Chromatic Aberration.**
 
 **Assistants change. Your context doesn't.**
 
