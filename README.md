@@ -20,6 +20,10 @@ We have completely re-engineered the core for industrial-strength reliability:
 - **Message Batching**: Debounced thought-capture prevents browser messaging overhead even during rapid chats.
 - **Offline-First**: Zero external dependencies. All 3D assets and libraries are bundled locally.
 
+## 🔥 Join the Collective
+We are looking for cinematic builders to help us evolve the Visual Cortex. 
+[Read the Contributing Guide](./CONTRIBUTING.md) to start forking and building.
+
 **Assistants change. Your context doesn't.**
 
 DeepSleep-Hub is a coordinate-free, cinematic knowledge bridge that ensures your AI mental map persists across **ChatGPT, Claude, Gemini, and Local Llama**. It acts as the "connective tissue" for your digital intelligence—so when you switch from debugging with Claude to local reasoning with Llama, your neural interface already holds the relevant codebase context.
