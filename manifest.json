@@ -1,12 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "DeepSleep-Hub",
-  "version": "2.0.0",
-  "permissions": [
-    "storage",
-    "activeTab",
-    "scripting"
-  ],
+  "name": "DeepSleep Hub",
+  "version": "1.0.0",
+  "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": [
     "https://chat.openai.com/*",
     "https://chatgpt.com/*",
@@ -14,6 +10,9 @@
     "https://gemini.google.com/*",
     "https://kimi.moonshot.cn/*"
   ],
+  "action": {
+    "default_popup": "popup.html"
+  },
   "background": {
     "service_worker": "background.js",
     "type": "module"
@@ -39,8 +38,5 @@
       "js": ["content-kimi.js"],
       "run_at": "document_idle"
     }
-  ],
-  "action": {
-    "default_popup": "popup.html"
-  }
+  ]
 }
