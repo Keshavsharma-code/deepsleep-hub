@@ -84,7 +84,7 @@ function init() {
 
     animate();
 
-    setTimeout(() => { addDemoNodes(); }, 1000);
+    setTimeout(() => { loadRealKnowledge(); }, 1000);
 
   } catch (error) {
     console.error('❌ Initialization failed:', error);
@@ -528,15 +528,35 @@ function gsapAnimation(target, props, duration, ease) {
   requestAnimationFrame(update);
 }
 
-function addDemoNodes() {
-  createThoughtNode('openai', 'RAG is better than long context for precise retrieval', 'RAG vs Context');
-  setTimeout(() => createThoughtNode('claude', 'LLMs can be viewed as compilers for natural language', 'LLM Compilers'), 500);
-  setTimeout(() => createThoughtNode('gemini', 'Obsidian markdown workflows enable Zettelkasten', 'Knowledge Graph'), 1000);
-  setTimeout(() => createThoughtNode('kimi', 'Vector database search requires embedding optimization', 'Vectors Setup'), 1500);
-  setTimeout(() => createThoughtNode('deepsleep', 'Consolidating memories during idle time', 'Base Consolidation'), 2000);
-  setTimeout(() => createThoughtNode('claude', 'System prompt architecture bounds recursive alignment', 'Alignment Chains'), 2500);
-  setTimeout(() => createThoughtNode('openai', 'Speculative decoding reduces TTFT in production', 'Token Metrics'), 3000);
+async function loadRealKnowledge() {
+  console.log('Fetching deeply embedded knowledge from Dexie database...');
+  // Wait a fraction of a second to ensure modules mount
+  await new Promise(r => setTimeout(r, 200)); 
+  
+  if (typeof window.GraphDB !== 'undefined') {
+      try {
+          const data = await window.GraphDB.getAllData();
+          const thoughts = data.nodes;
+          if (!thoughts || thoughts.length === 0) {
+              console.log('Local real database is empty.');
+              createThoughtNode('deepsleep', 'Neural mesh initialized. DB is currently empty. Open an LLM chat to begin tracking.', 'Core Initialization');
+          } else {
+              console.log('Restoring', thoughts.length, 'real structured thoughts from the graph DB!');
+              thoughts.forEach((t, i) => {
+                  setTimeout(() => {
+                      createThoughtNode(t.aiSource || 'openai', t.name, t.name);
+                  }, i * 150);
+              });
+          }
+      } catch(err) {
+          console.error("Dexie DB Error", err);
+      }
+  } else {
+      console.warn('Real DB engine not found in context. Generating fallbacks.');
+      setTimeout(() => createThoughtNode('deepsleep', 'Awaiting DB Module...', 'Status: Offline'), 500);
+  }
 }
+
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
 else init();
