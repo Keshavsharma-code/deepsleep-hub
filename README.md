@@ -11,7 +11,7 @@ DeepSleep-Hub is not just a toy sphere visualizer—it's a functioning Knowledge
 1. **Extraction Layer**: Content scripts intercept AI conversations in real-time, sending chunks to a background Service Worker.
 2. **Semantic Knowledge Engine**: A background worker determines Concepts and Relationships using Regex patterns (and optionally `transformers.js` via the pipeline).
 3. **Graph Storage**: An IndexedDB implementation wrapped by `Dexie.js` persistently holds all nodes (Concepts), edges (Relationships), calculating *PageRank* metrics to define node scale.
-4. **The Visual Brain**: A hybrid WebGL application merging the physics-directed layout of `Cytoscape.js` (with Cola layout) and advanced visual overlays using `Three.js` (rendering the Spider-Verse style bloom filters, dream mist particles, and active lightning animations).
+4. **The Visual Brain**: A hybrid WebGL application merging the physics-directed layout of `Cytoscape.js` (with Cola layout) and advanced visual overlays using `Three.js` (rendering neural bloom filters, dream mist particles, and active lightning animations).
 
 ## Supported Platforms (Automatic Injection)
 - **ChatGPT**: `#ffffff` (White Frontal Lobe)
@@ -45,7 +45,7 @@ Once loaded, DeepSleep-Hub silently monitors supported platforms in the backgrou
 
 ## 🧪 Testing Locally (Without an AI Account)
 
-If you just want to see the 3D Spider-Verse/Cytoscape visualizations in action without generating 30 real-world RAG queries to Claude, you can use the included `test.html` sandbox sandbox!
+If you just want to see the 3D biological visualizations in action without generating 30 real-world RAG queries to Claude, you can use the included `sandbox.html`!
 
 1. Load the extension in Chrome.
 2. Open the file `test.html` in your browser. (e.g., File -> Open File -> `test.html`).
