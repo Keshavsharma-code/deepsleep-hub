@@ -8,6 +8,7 @@ let brainGroup, thoughtNodes = [], edges = [];
 let raycaster, mouse;
 let isInitialized = false;
 let labelsContainer;
+let nodeInjectMem = {};
 
 // Lobe storage
 const logicalLobes = {};
@@ -124,9 +125,28 @@ function createBiologicalBrain() {
     const lobe = new THREE.Mesh(geometry, material);
     lobe.position.set(...config.pos);
     lobe.scale.setScalar(config.scale);
+    lobe.userData = { isLobe: true, ai: config.ai, name: config.name };
     
-    // We remove the halo, because we want it to look like a solid connected brain
-    
+    // Macro Label
+    if (labelsContainer) {
+       const mLabel = document.createElement('div');
+       mLabel.className = 'macro-label';
+       mLabel.style.position = 'absolute';
+       mLabel.style.color = '#' + config.color.toString(16).padStart(6, '0');
+       mLabel.style.fontSize = '16px';
+       mLabel.style.fontFamily = 'Inter, sans-serif';
+       mLabel.style.fontWeight = '800';
+       mLabel.style.textTransform = 'uppercase';
+       mLabel.style.letterSpacing = '1px';
+       mLabel.style.textShadow = '0 4px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,1)';
+       mLabel.style.pointerEvents = 'none';
+       mLabel.style.whiteSpace = 'nowrap';
+       mLabel.style.transition = 'opacity 0.3s ease';
+       mLabel.innerText = config.ai + ' Cluster';
+       labelsContainer.appendChild(mLabel);
+       lobe.userData.macroLabel = mLabel;
+    }
+
     brainGroup.add(lobe);
     logicalLobes[config.name] = lobe;
     // Map AI to logical lobe (handle multiple lobes for the same AI, like temporal left/right)
@@ -201,6 +221,8 @@ function createThoughtNode(ai, text, concept) {
 
   brainGroup.add(node);
   thoughtNodes.push(node);
+  
+  nodeInjectMem[ai] = concept || text.substring(0, 30);
 
   node.scale.set(0.01, 0.01, 0.01);
   gsapAnimation(node.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0.6, "back.out");
@@ -312,15 +334,66 @@ function onMouseClick(event) {
   if (intersects.length > 0) {
     const node = intersects[0].object;
     // alert(`Concept: ${node.userData.concept}\nAI: ${node.userData.ai}\nText: ${node.userData.text}`);
-    const targetPos = node.position.clone();
-    gsapAnimation(camera.position, { x: targetPos.x + 10, y: targetPos.y + 10, z: targetPos.z + 10 }, 1, "power2.out");
-    gsapAnimation(controls.target, { x: targetPos.x, y: targetPos.y, z: targetPos.z }, 1, "power2.out");
+    const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
+    
+    // Ensure popup stays on screen
+    const pWidth = 350;
+    const pHeight = 200;
+    let finalX = x;
+    let finalY = y;
+    if (x + pWidth > window.innerWidth) finalX = window.innerWidth - pWidth - 20;
+    if (y + pHeight > window.innerHeight) finalY = window.innerHeight - pHeight - 20;
+    
+    popup.style.left = finalX + 'px';
+    popup.style.top = finalY + 'px';
+    document.body.appendChild(popup);
+    
+    // Click outside to close
+    setTimeout(() => {
+        const closeHnd = () => { popup.remove(); window.removeEventListener('click', closeHnd); };
+        window.addEventListener('click', closeHnd);
+    }, 100);
   } else {
     // Reset view
-    gsapAnimation(camera.position, { x: 0, y: 20, z: 60 }, 1.5, "power2.out");
+    gsapAnimation(camera.position, { x: 0, y: 30, z: 80 }, 1.5, "power2.out");
     gsapAnimation(controls.target, { x: 0, y: 0, z: 0 }, 1.5, "power2.out");
+    
+    const lobeIntersects = raycaster.intersectObjects(Object.values(logicalLobes).flat());
+    if (lobeIntersects.length > 0) {
+        const lobe = lobeIntersects[0].object;
+        createThoughtNode(lobe.userData.ai, "Manual Node Injection: Exploratory Thought Process", "Manual Pulse");
+    }
   }
 }
+
+window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') {
+        const keys = Object.keys(AI_CONFIG);
+        const rAi = keys[Math.floor(Math.random() * keys.length)];
+        createThoughtNode(rAi, "Universal Spontaneous Neural Injection Fired", "Spontaneous Injection");
+    }
+});
+
+function onRightClick(event) {
+  event.preventDefault();
+  if (!isInitialized) return;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(thoughtNodes);
+  
+  if (intersects.length > 0) {
+      const node = intersects[0].object;
+      alert(`[SYSTEM] Accessing origin chat for trace ID ${node.id}...\nSource LLM: ${node.userData.ai.toUpperCase()}\nText Context: "${node.userData.text}"`);
+  } else {
+      const lobeIntersects = raycaster.intersectObjects(Object.values(logicalLobes).flat());
+      if (lobeIntersects.length > 0) {
+         const lobe = lobeIntersects[0].object;
+         alert(`[SYSTEM] Inspecting macro region.\nStructural Domain: ${lobe.userData.name.toUpperCase()}\nHost Architecture: ${lobe.userData.ai.toUpperCase()}`);
+      }
+  }
+}
+
+window.addEventListener('contextmenu', onRightClick);
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -338,6 +411,8 @@ function animate() {
   controls.update();
 
   const time = Date.now() * 0.001;
+  const globalDist = camera.position.length();
+
   thoughtNodes.forEach((node, i) => {
     node.position.y += Math.sin(time * 2 + i) * 0.02;
     
@@ -355,30 +430,85 @@ function animate() {
             const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
             node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 20}px)`;
             
-            const dist = camera.position.distanceTo(tempV.copy(node.position).applyMatrix4(brainGroup.matrixWorld));
+            // Multi-level zoom mappings
+            // Level 1: > 100 (Far) - Only macro lobes visible
+            // Level 2: 60 to 100 (Medium) - Macro lobes fade out, medium labels appear
+            // Level 3: 30 to 60 (Close) - Tiny nodes fully bright and sharp
+            // Level 4: < 30 (Super Close) - Maximum interactivity
             
-            // Scaled Opacity mapping depth
-            // If very close (< 20), opacity 1
-            // If far (> 60), opacity 0
-            if (dist > 70) {
-               node.userData.label.style.opacity = 0;
-            } else if (dist < 30) {
-               node.userData.label.style.opacity = 1;
-               node.userData.label.style.transform += ` scale(1.5)`;
-               node.userData.label.style.zIndex = 100;
+            if (globalDist > 90) {
+               node.userData.label.style.opacity = 0; // Level 1: Labels hidden
+               node.material.opacity = 0.2; // Nodes fade
+            } else if (globalDist > 50) {
+               // Level 2: Nodes fading in, labels visible but soft
+               node.userData.label.style.opacity = ((90 - globalDist) / 40) * 0.6;
+               node.material.opacity = 0.5;
+               node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 12}px) scale(0.8)`;
             } else {
-               node.userData.label.style.opacity = 1 - ((dist - 30) / 40);
-               node.userData.label.style.zIndex = Math.floor(100 - dist);
+               // Level 3 & 4: Deep focus
+               node.userData.label.style.opacity = 1;
+               node.material.opacity = 1.0;
+               node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 20}px) scale(1.1)`;
+               
+               if (globalDist < 30) {
+                  node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 25}px) scale(1.3)`;
+                  node.userData.label.style.zIndex = 100;
+               }
             }
         }
     }
   });
+
+  // Calculate Macro Label screen positions & Multi-level Zoom Opacity
+  Object.values(logicalLobes).flat().forEach(lobe => {
+      if (lobe.userData.macroLabel) {
+          tempV.copy(lobe.position);
+          lobe.localToWorld(tempV);
+          tempV.project(camera);
+          
+          if (tempV.z > 1) {
+              lobe.userData.macroLabel.style.display = 'none';
+          } else {
+              lobe.userData.macroLabel.style.display = 'block';
+              const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+              const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
+              lobe.userData.macroLabel.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
+              
+              // Only visible at Level 1 & 2
+              if (globalDist > 100) {
+                  lobe.userData.macroLabel.style.opacity = 0.8;
+              } else if (globalDist > 60) {
+                  lobe.userData.macroLabel.style.opacity = ((globalDist - 60) / 40);
+              } else {
+                  lobe.userData.macroLabel.style.opacity = 0; // Hidden closely
+              }
+              
+              // Latest concept logic
+              if (nodeInjectMem && nodeInjectMem[lobe.userData.ai]) {
+                  lobe.userData.macroLabel.innerText = nodeInjectMem[lobe.userData.ai];
+              }
+          }
+      }
+  });
   
-  edges.forEach(edge => {
+  // Animate dynamic synapse trails
+  edges.forEach((edge, i) => {
      const positions = edge.line.geometry.attributes.position.array;
      positions[0] = edge.nodeA.position.x; positions[1] = edge.nodeA.position.y; positions[2] = edge.nodeA.position.z;
      positions[3] = edge.nodeB.position.x; positions[4] = edge.nodeB.position.y; positions[5] = edge.nodeB.position.z;
      edge.line.geometry.attributes.position.needsUpdate = true;
+
+     // Level-based Edge Opacity & Dynamic Pulsing
+     if (globalDist > 100) {
+         edge.line.material.opacity = 0; // Level 1 (Faded)
+     } else if (globalDist > 50) {
+         edge.line.material.opacity = ((100 - globalDist) / 50) * 0.2; // Medium glow
+     } else {
+         edge.line.material.opacity = 0.6 + Math.sin(time * 3 + i) * 0.4; // Synapse Pulse (Level 3/4)
+     }
+     
+     // Thicken or narrow line based on thought scale
+     edge.line.material.linewidth = globalDist < 40 ? 2 : 1; 
   });
 
   composer.render();
