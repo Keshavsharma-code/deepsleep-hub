@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { 
+      width: 400px; 
+      height: 500px; 
+      background: #050508;
+      color: white;
+      font-family: 'SF Mono', monospace;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 { font-weight: normal; letter-spacing: 2px; margin-bottom: 20px; }
+    .status { 
+      padding: 10px; 
+      background: rgba(255,255,255,0.1); 
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+    .ai-status {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: inherit;
+    }
+    button:hover { background: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+  <h2>DEEPSLEEP-HUB V2</h2>
+  <div class="status">Status: <span id="status">Active Semantic Graph</span></div>
+  
+  <div class="ai-status">
+    <div class="dot" style="background: #ffffff;"></div>
+    <span>OpenAI (GPT-4)</span>
+  </div>
+  <div class="ai-status">
+    <div class="dot" style="background: #f97316;"></div>
+    <span>Claude (Anthropic)</span>
+  </div>
+  <div class="ai-status">
+    <div class="dot" style="background: #a855f7;"></div>
+    <span>Gemini (Google)</span>
+  </div>
+  <div class="ai-status">
+    <div class="dot" style="background: #ef4444;"></div>
+    <span>Kimi (Moonshot)</span>
+  </div>
+  <div class="ai-status">
+    <div class="dot" style="background: #fbbf24; box-shadow: 0 0 5px #fbbf24;"></div>
+    <span>DeepSleep-beta (Dream Nodes)</span>
+  </div>
+  
+  <button id="open-brain">Enter Semantic Visualization</button>
+  <button id="clear-memory">Purge Vector Database</button>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

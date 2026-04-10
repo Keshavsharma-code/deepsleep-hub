@@ -1,0 +1,39 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+  background: #050508; 
+  color: white; 
+  font-family: 'SF Mono', monospace;
+  overflow: hidden;
+}
+#canvas-container { 
+  width: 100vw; 
+  height: 100vh; 
+  position: absolute;
+  top: 0; left: 0; z-index: 1;
+}
+#cy { 
+  width: 100vw; 
+  height: 100vh; 
+  position: absolute;
+  top: 0; left: 0; z-index: 10;
+  background: transparent;
+}
+.thought {
+  margin-bottom: 12px;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  border-left: 3px solid;
+}
+.ai-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  opacity: 0.6;
+  margin-bottom: 4px;
+}
+.thought-text {
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0.9;
+}
