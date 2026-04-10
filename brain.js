@@ -31,7 +31,7 @@ function init() {
     scene.fog = new THREE.FogExp2(0x050508, 0.008);
 
     camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 20, 60);
+    camera.position.set(0, 30, 80);
 
     const canvasContainer = document.getElementById('canvas-container');
     labelsContainer = document.getElementById('labels-container');
@@ -92,15 +92,14 @@ function init() {
 }
 
 function createBiologicalBrain() {
-  // Symmetrical and closely packed to form a single anatomical cerebrum shape
   const lobeConfigs = [
-    { name: 'frontal', color: 0x333333, pos: [0, 5, 8], scale: 1.1, ai: 'openai' },
-    { name: 'parietal', color: 0x2a2a35, pos: [0, 8, -3], scale: 1.0, ai: 'codex' },
-    { name: 'temporal_right', color: 0x352a2a, pos: [7, 1, 0], scale: 0.9, ai: 'claude' },
-    { name: 'temporal_left', color: 0x352a2a, pos: [-7, 1, 0], scale: 0.9, ai: 'claude' },
-    { name: 'occipital', color: 0x2e2a35, pos: [0, 2, -10], scale: 0.85, ai: 'gemini' },
-    { name: 'cerebellum', color: 0x352a2a, pos: [0, -6, -8], scale: 0.65, ai: 'kimi' },
-    { name: 'core', color: 0x332211, pos: [0, -1, -2], scale: 0.7, ai: 'deepsleep' }
+    { name: 'frontal', color: 0xffffff, pos: [0, 8, 14], scale: 1.8, ai: 'openai' },
+    { name: 'parietal', color: 0x3b82f6, pos: [0, 14, -4], scale: 1.6, ai: 'codex' },
+    { name: 'temporal_right', color: 0xf97316, pos: [12, 2, 2], scale: 1.4, ai: 'claude' },
+    { name: 'temporal_left', color: 0xf97316, pos: [-12, 2, 2], scale: 1.4, ai: 'claude' },
+    { name: 'occipital', color: 0xa855f7, pos: [0, 4, -15], scale: 1.3, ai: 'gemini' },
+    { name: 'cerebellum', color: 0xef4444, pos: [0, -8, -10], scale: 1.1, ai: 'kimi' },
+    { name: 'core', color: 0xfbbf24, pos: [0, -1, -2], scale: 1.0, ai: 'deepsleep' }
   ];
   
   lobeConfigs.forEach(config => {
@@ -119,7 +118,7 @@ function createBiologicalBrain() {
     geometry.computeVertexNormals();
     
     const material = new THREE.MeshStandardMaterial({
-      color: 0x0a0a0f, emissive: config.color, emissiveIntensity: 0.1, roughness: 0.6, metalness: 0.4, transparent: true, opacity: 0.8
+      color: config.color, emissive: config.color, emissiveIntensity: 0.3, roughness: 0.3, metalness: 0.7, transparent: true, opacity: 0.65
     });
     
     const lobe = new THREE.Mesh(geometry, material);
