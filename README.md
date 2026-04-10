@@ -60,6 +60,13 @@ Once the extension is loaded, the engine works **automatically**. You don't need
 
 ![DeepSleep User Journey](docs/user_journey.png)
 
+## 🔗 DeepSleep Ecosystem
+For those seeking the full atmospheric experience, also use [DeepSleep-beta](https://github.com/Keshavsharma-code/DeepSleep-beta). 
+
+This companion repository handles the **Dream Mode** synthesis, enabling the gold-throbbing Hippocampus nodes and advanced semantic consolidation physics seen in the visual cortex.
+
+---
+
 ## 🔒 Privacy & Safety
 - **100% Local**: All data is stored in your browser's IndexedDB. 
 - **No External Servers**: Your chat history never leaves your machine.
