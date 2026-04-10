@@ -32,8 +32,8 @@ async function processThoughtAsync(ai, content, fullLog) {
       // Store concepts
       for (const c of concepts) {
         if (!dbConceptIds[c.name]) {
-          // Compute pseudo-embedding vector
-          const vector = Array.from({length: 384}, () => Math.random() - 0.5); 
+          // Compute real semantic embedding vector [^24^] (Aligned with README)
+          const vector = await KnowledgeExtractor.embed(c.name); 
           dbConceptIds[c.name] = await GraphDB.addConcept(c.name, ai, vector);
           c.dbId = dbConceptIds[c.name];
         } else {
