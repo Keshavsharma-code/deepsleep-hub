@@ -16,8 +16,8 @@ Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deploy
 ### 1. Enable Developer Mode
 1. Download the latest production build: [**DeepSleep-Hub-v1.1.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v1.1.zip).
 2. Open Google Chrome (or any Chromium browser like Brave/Edge).
-2. Type `chrome://extensions/` in the address bar and hit Enter.
-3. In the top-right corner, toggle **Developer mode** to **ON**.
+3. Type `chrome://extensions/` in the address bar and hit Enter.
+4. In the top-right corner, toggle **Developer mode** to **ON**.
 
 ### 2. Load the Engine
 1. Click the **Load unpacked** button (top left).
@@ -30,6 +30,12 @@ Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deploy
 2. Click the **DeepSleep Hub** icon.
 3. In the popup that appears, click **"Enter Semantic Visualization"**.
 4. This will launch the 3D Brain interface into a new tab. Done.
+
+### 4. How to Confirm it's Working
+Once installed, you can verify the connection in 3 seconds:
+*   **The Toolbar**: You will see the glowing brain icon in your browser's extensions bar.
+*   **The Initialization**: Open the brain interface. You should see a single golden node at the core saying **"Neural mesh initialized"**.
+*   **The Pulse**: Type anything into ChatGPT. If you see a subtle green border appear on your AI response, the DeepSleep scout has successfully captured the thought.
 
 ---
 
@@ -59,14 +65,11 @@ Once the extension is loaded, the engine works **automatically**. You don't need
 
 ---
 
-![DeepSleep User Journey](docs/user_journey.png)
-
-## 🔗 DeepSleep Ecosystem
-For those seeking the full atmospheric experience, also use [DeepSleep-beta](https://github.com/Keshavsharma-code/DeepSleep-beta). 
-
-This companion repository handles the **Dream Mode** synthesis, enabling the gold-throbbing Hippocampus nodes and advanced semantic consolidation physics seen in the visual cortex.
+🔗 **DeepSleep Ecosystem**: For those seeking the full atmospheric experience, also use [DeepSleep-beta](https://github.com/Keshavsharma-code/DeepSleep-beta) for Dream Mode synthesis.
 
 ---
+
+![DeepSleep User Journey](docs/user_journey.png)
 
 ## 🔒 Privacy & Safety
 - **100% Local**: All data is stored in your browser's IndexedDB. 
