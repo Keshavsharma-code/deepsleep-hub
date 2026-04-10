@@ -25,7 +25,8 @@ const AI_CONFIG = {
 
 function init() {
   console.log('Initializing Three.js...');
-
+  document.getElementById('loading').style.display = 'none';
+  
   try {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x050508);
@@ -86,7 +87,6 @@ function init() {
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('resize', onWindowResize);
 
-    document.getElementById('loading').style.display = 'none';
     isInitialized = true;
     console.log('🚀 Brain initialization complete!');
 
@@ -367,6 +367,14 @@ function onMouseClick(event) {
     const node = intersects[0].object;
     const data = node.userData;
     
+    // Project node position to screen for coordinates
+    tempV.copy(node.position);
+    node.localToWorld(tempV);
+    tempV.project(camera);
+    
+    const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+    const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
+    
     // Use the trace overlay for left clicks too for consistency and reliability
     const overlay = document.getElementById('trace-overlay');
     document.getElementById('trace-ai-type').innerText = data.ai.toUpperCase();
@@ -398,7 +406,19 @@ window.addEventListener('keydown', (e) => {
         const rAi = keys[Math.floor(Math.random() * keys.length)];
         createThoughtNode(rAi, "Universal Spontaneous Neural Injection Fired", "Spontaneous Injection");
     }
+    if (e.key === 'z' || e.key === 'Z') {
+        toggleZenMode();
+    }
 });
+
+function toggleZenMode() {
+    const panels = document.querySelectorAll('.panel, #toggle-ui');
+    const isHidden = panels[0].style.opacity === '0';
+    panels.forEach(p => {
+        p.style.opacity = isHidden ? '1' : '0';
+        p.style.pointerEvents = isHidden ? 'auto' : 'none';
+    });
+}
 
 function onRightClick(event) {
   event.preventDefault();
