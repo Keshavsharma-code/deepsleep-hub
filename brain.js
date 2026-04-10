@@ -53,13 +53,18 @@ function init() {
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.5; // Spins slowly by itself but stops when you grab it!
 
-    const renderScene = new THREE.RenderPass(scene, camera);
-    const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.0, 0.4, 0.85);
-    bloomPass.strength = 1.8;
+    try {
+      const renderScene = new THREE.RenderPass(scene, camera);
+      const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.0, 0.4, 0.85);
+      bloomPass.strength = 1.8;
 
-    composer = new THREE.EffectComposer(renderer);
-    composer.addPass(renderScene);
-    composer.addPass(bloomPass);
+      composer = new THREE.EffectComposer(renderer);
+      composer.addPass(renderScene);
+      composer.addPass(bloomPass);
+    } catch (e) {
+      console.warn("Post-processing failed. Falling back to basic renderer.", e);
+      composer = { render: () => renderer.render(scene, camera), setSize: () => {} };
+    }
 
     scene.add(new THREE.AmbientLight(0x404040, 4));
     const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
@@ -360,31 +365,24 @@ function onMouseClick(event) {
   
   if (intersects.length > 0) {
     const node = intersects[0].object;
-    // alert(`Concept: ${node.userData.concept}\nAI: ${node.userData.ai}\nText: ${node.userData.text}`);
-    const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
-    const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
+    const data = node.userData;
     
-    // Ensure popup stays on screen
-    const pWidth = 350;
-    const pHeight = 200;
-    let finalX = x;
-    let finalY = y;
-    if (x + pWidth > window.innerWidth) finalX = window.innerWidth - pWidth - 20;
-    if (y + pHeight > window.innerHeight) finalY = window.innerHeight - pHeight - 20;
+    // Use the trace overlay for left clicks too for consistency and reliability
+    const overlay = document.getElementById('trace-overlay');
+    document.getElementById('trace-ai-type').innerText = data.ai.toUpperCase();
+    document.getElementById('trace-ai-type').style.color = '#' + AI_CONFIG[data.ai]?.color.toString(16).padStart(6, '0');
+    document.getElementById('trace-content').innerText = data.text || "No context data available.";
+    document.getElementById('trace-node-id').innerText = node.id;
+    document.getElementById('trace-lobe').innerText = (data.concept || "UNKNOWN").toUpperCase();
     
-    popup.style.left = finalX + 'px';
-    popup.style.top = finalY + 'px';
-    document.body.appendChild(popup);
-    
-    // Click outside to close
-    setTimeout(() => {
-        const closeHnd = () => { popup.remove(); window.removeEventListener('click', closeHnd); };
-        window.addEventListener('click', closeHnd);
-    }, 100);
+    overlay.classList.add('active');
   } else {
     // Reset view
     gsapAnimation(camera.position, { x: 0, y: 30, z: 80 }, 1.5, "power2.out");
     gsapAnimation(controls.target, { x: 0, y: 0, z: 0 }, 1.5, "power2.out");
+    
+    const overlay = document.getElementById('trace-overlay');
+    overlay.classList.remove('active');
     
     const lobeIntersects = raycaster.intersectObjects(Object.values(logicalLobes).flat());
     if (lobeIntersects.length > 0) {
@@ -591,8 +589,11 @@ async function loadRealKnowledge() {
           const data = await window.GraphDB.getAllData();
           const thoughts = data.nodes;
           if (!thoughts || thoughts.length === 0) {
-              console.log('Local real database is empty.');
+              console.log('Local real database is empty. Seeding neural mesh.');
               createThoughtNode('deepsleep', 'Neural mesh initialized. DB is currently empty. Open an LLM chat to begin tracking.', 'Core Initialization');
+              setTimeout(() => createThoughtNode('openai', 'Awaiting GPT-4 context stream...', 'Context Scout'), 400);
+              setTimeout(() => createThoughtNode('claude', 'Awaiting Claude semantic bridge...', 'Bridge Scout'), 800);
+              setTimeout(() => createThoughtNode('gemini', 'Awaiting Google Multimodal indexing...', 'Index Scout'), 1200);
           } else {
               console.log('Restoring', thoughts.length, 'real structured thoughts from the graph DB!');
               thoughts.forEach((t, i) => {
