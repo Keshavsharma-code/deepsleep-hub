@@ -1,38 +1,50 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>DeepSleep Hub - Neural Interface</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
-    
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      background: #050508; 
-      color: #e2e8f0; 
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #050508;
+      color: #e2e8f0;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
       overflow: hidden;
       width: 100vw;
       height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
-    #canvas-container { 
-      width: 100vw; 
-      height: 100vh; 
+
+    #canvas-container {
+      width: 100vw;
+      height: 100vh;
       position: absolute;
-      top: 0; left: 0; z-index: 1;
+      top: 0;
+      left: 0;
+      z-index: 1;
     }
+
     #ui-layer {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 10;
       pointer-events: none;
       display: flex;
       justify-content: space-between;
       padding: 24px;
     }
-    
+
     .panel {
       background: rgba(10, 10, 14, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -65,8 +77,11 @@
       gap: 8px;
       margin-bottom: 12px;
     }
+
     .overline .dot {
-      width: 8px; height: 8px; border-radius: 50%;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
     }
 
@@ -79,8 +94,14 @@
       text-transform: uppercase;
       color: white;
     }
-    .title .sleep { color: #3b82f6; }
-    .title .hub { color: #10b981; }
+
+    .title .sleep {
+      color: #3b82f6;
+    }
+
+    .title .hub {
+      color: #10b981;
+    }
 
     .description {
       font-size: 14px;
@@ -94,6 +115,7 @@
       flex-wrap: wrap;
       gap: 12px;
     }
+
     .pill {
       padding: 10px 16px;
       border-radius: 100px;
@@ -108,8 +130,10 @@
 
     .core-memory-panel {
       padding: 24px 32px;
-      margin-bottom: 100px; /* Leave space for bottom bar */
+      margin-bottom: 100px;
+      /* Leave space for bottom bar */
     }
+
     .core-memory-title {
       font-size: 20px;
       font-weight: 700;
@@ -138,17 +162,19 @@
       align-items: center;
       margin-bottom: 24px;
     }
+
     .stream-title {
       font-size: 16px;
       font-weight: 700;
       letter-spacing: 1px;
       color: white;
     }
+
     .sim-badge {
       font-size: 11px;
       color: #94a3b8;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 6px 12px;
       border-radius: 100px;
     }
@@ -161,9 +187,15 @@
       gap: 12px;
       padding-right: 8px;
     }
-    
-    #thoughts-list::-webkit-scrollbar { width: 4px; }
-    #thoughts-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+    #thoughts-list::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #thoughts-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
 
     .thought {
       background: rgba(15, 15, 20, 0.8);
@@ -173,6 +205,7 @@
       border-left: 4px solid;
       animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
+
     .thought-ai {
       font-size: 10px;
       font-weight: 700;
@@ -181,6 +214,7 @@
       color: #94a3b8;
       margin-bottom: 6px;
     }
+
     .thought-text {
       font-size: 13px;
       color: #f8fafc;
@@ -203,6 +237,7 @@
       display: flex;
       gap: 16px;
     }
+
     .circle-btn {
       width: 56px;
       height: 56px;
@@ -218,11 +253,12 @@
       color: white;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
     }
+
     .circle-btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 0 15px currentColor, inset 0 0 10px rgba(0,0,0,0.5);
+      box-shadow: 0 0 15px currentColor, inset 0 0 10px rgba(0, 0, 0, 0.5);
     }
 
     .legend-text {
@@ -237,36 +273,50 @@
     .pressure-container {
       margin-top: 24px;
       padding-top: 24px;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
     @keyframes slideIn {
-      from { opacity: 0; transform: translateX(20px); }
-      to { opacity: 1; transform: translateX(0); }
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
 
     #loading {
       position: absolute;
-      top: 50%; left: 50%;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
       color: #fbbf24;
-      font-size: 14px; font-family: 'Inter', sans-serif; font-weight: 600;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
       z-index: 100;
     }
   </style>
 </head>
+
 <body>
   <div id="loading">Initializing Neural Mesh...</div>
   <div id="canvas-container"></div>
-  
+
   <div id="ui-layer">
-    
+
     <div class="left-column">
       <div class="panel header-panel">
-        <div class="overline"><div class="dot"></div> INTERACTIVE CONCEPT PREVIEW</div>
+        <div class="overline">
+          <div class="dot"></div> INTERACTIVE CONCEPT PREVIEW
+        </div>
         <div class="title">DEEP<span class="sleep">SLEEP</span>-<span class="hub">HUB</span><br>NEURAL ENGINE</div>
         <div class="description">
-          Smooth zoom, biological neural processing, glowing AI thought nodes, live synapse particles, and chromatic data energy — built as a downloadable HTML concept you can actually open and play with.
+          Smooth zoom, biological neural processing, glowing AI thought nodes, live synapse particles, and chromatic
+          data energy — built as a downloadable HTML concept you can actually open and play with.
         </div>
         <div class="pill-container">
           <div class="pill">DRAG TO ROTATE</div>
@@ -293,46 +343,59 @@
         <div id="thoughts-list"></div>
 
         <div class="pressure-container">
-          <div style="display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px;">
+          <div
+            style="display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px;">
             <span>Neural Pressure</span>
             <span id="pressure-text" style="color: #fbbf24;">0%</span>
           </div>
           <div style="height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden;">
-            <div id="pressure-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #fbbf24, #ef4444); transition: width 0.3s;"></div>
+            <div id="pressure-bar"
+              style="height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #fbbf24, #ef4444); transition: width 0.3s;">
+            </div>
           </div>
-          <div style="margin-top: 12px; font-size: 11px; color: #64748b; font-weight: 500; display: flex; gap: 16px; flex-wrap: wrap;">
-             <div><span style="color:white;">●</span> OpenAI</div>
-             <div><span style="color:#3b82f6;">●</span> Codex</div>
-             <div><span style="color:#f97316;">●</span> Claude</div>
-             <div><span style="color:#a855f7;">●</span> Gemini</div>
-             <div><span style="color:#ef4444;">●</span> Kimi Accent</div>
-             <div><span style="color:#fbbf24;">●</span> Core Memory</div>
+          <div
+            style="margin-top: 12px; font-size: 11px; color: #64748b; font-weight: 500; display: flex; gap: 16px; flex-wrap: wrap;">
+            <div><span style="color:white;">●</span> OpenAI</div>
+            <div><span style="color:#3b82f6;">●</span> Codex</div>
+            <div><span style="color:#f97316;">●</span> Claude</div>
+            <div><span style="color:#a855f7;">●</span> Gemini</div>
+            <div><span style="color:#ef4444;">●</span> Kimi Accent</div>
+            <div><span style="color:#fbbf24;">●</span> Core Memory</div>
           </div>
         </div>
       </div>
     </div>
-    
+
   </div>
 
   <div class="panel bottom-bar" style="pointer-events: auto;">
-     <div class="circle-btns">
-        <div class="circle-btn" style="border-color: #ffffff; color: #ffffff;" onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'openai', text: 'Simulated reasoning generated successfully. Optimization routines initialized.', concepts: [{name: 'Optimization'}]})">GPT</div>
-        <div class="circle-btn" style="border-color: #3b82f6; color: #3b82f6;" onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'codex', text: 'Compiling syntax tree and resolving semantic tokens.', concepts: [{name: 'Parser'}]})">CODEX</div>
-        <div class="circle-btn" style="border-color: #f97316; color: #f97316;" onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'claude', text: 'Analyzing ethical constraints and structural nuance.', concepts: [{name: 'Analysis'}]})">CLAUDE</div>
-        <div class="circle-btn" style="border-color: #a855f7; color: #a855f7;" onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'gemini', text: 'Multimodal extraction indexing triggered.', concepts: [{name: 'Indexing'}]})">GEMINI</div>
-        <div class="circle-btn" style="border-color: #ef4444; color: #ef4444;" onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'kimi', text: 'Long-context vector scanning complete.', concepts: [{name: 'Vectors'}]})">KIMI</div>
-     </div>
-     <div class="legend-text">
-        <span>Node generation</span>
-        <span>Chromatic edge shift</span>
-        <span>Soft brain topology</span>
-        <span>Force-like drifting</span>
-     </div>
+    <div class="circle-btns">
+      <div class="circle-btn" style="border-color: #ffffff; color: #ffffff;"
+        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'openai', text: 'Simulated reasoning generated successfully. Optimization routines initialized.', concepts: [{name: 'Optimization'}]})">
+        GPT</div>
+      <div class="circle-btn" style="border-color: #3b82f6; color: #3b82f6;"
+        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'codex', text: 'Compiling syntax tree and resolving semantic tokens.', concepts: [{name: 'Parser'}]})">
+        CODEX</div>
+      <div class="circle-btn" style="border-color: #f97316; color: #f97316;"
+        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'claude', text: 'Analyzing ethical constraints and structural nuance.', concepts: [{name: 'Analysis'}]})">
+        CLAUDE</div>
+      <div class="circle-btn" style="border-color: #a855f7; color: #a855f7;"
+        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'gemini', text: 'Multimodal extraction indexing triggered.', concepts: [{name: 'Indexing'}]})">
+        GEMINI</div>
+      <div class="circle-btn" style="border-color: #ef4444; color: #ef4444;"
+        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'kimi', text: 'Long-context vector scanning complete.', concepts: [{name: 'Vectors'}]})">
+        KIMI</div>
+    </div>
+    <div class="legend-text">
+      <span>Node generation</span>
+      <span>Chromatic edge shift</span>
+      <span>Soft brain topology</span>
+      <span>Force-like drifting</span>
+    </div>
   </div>
 
-  <div id="labels-container" style="position: absolute; top:0; left:0; width:100vw; height:100vh; pointer-events: none; z-index: 5; overflow: hidden;"></div>
-
-  <button id="toggle-ui" style="position: absolute; top: 24px; right: 24px; z-index: 100; background: rgba(10,10,14,0.8); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 100px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.2s;">
+  <button id="toggle-ui"
+    style="position: absolute; top: 24px; right: 24px; z-index: 100; background: rgba(10,10,14,0.8); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: 100px; font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.2s;">
     MINIMIZE UI ⌘
   </button>
 
@@ -345,7 +408,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-  
+
   <script src="brain.js"></script>
 
   <script>
@@ -355,22 +418,22 @@
     let uiVisible = true;
 
     toggleBtn.addEventListener('click', () => {
-       uiVisible = !uiVisible;
-       if (uiVisible) {
-          uiLayer.style.opacity = '1';
-          uiLayer.style.pointerEvents = 'none'; // container itself is none, children are auto
-          Array.from(uiLayer.children).forEach(c => c.style.pointerEvents = 'auto');
-          bottomBar.style.opacity = '1';
-          bottomBar.style.pointerEvents = 'auto';
-          toggleBtn.innerText = 'MINIMIZE UI ⌘';
-       } else {
-          uiLayer.style.opacity = '0';
-          uiLayer.style.pointerEvents = 'none';
-          Array.from(uiLayer.children).forEach(c => c.style.pointerEvents = 'none');
-          bottomBar.style.opacity = '0';
-          bottomBar.style.pointerEvents = 'none';
-          toggleBtn.innerText = 'RESTORE UI ⌘';
-       }
+      uiVisible = !uiVisible;
+      if (uiVisible) {
+        uiLayer.style.opacity = '1';
+        uiLayer.style.pointerEvents = 'none'; // container itself is none, children are auto
+        Array.from(uiLayer.children).forEach(c => c.style.pointerEvents = 'auto');
+        bottomBar.style.opacity = '1';
+        bottomBar.style.pointerEvents = 'auto';
+        toggleBtn.innerText = 'MINIMIZE UI ⌘';
+      } else {
+        uiLayer.style.opacity = '0';
+        uiLayer.style.pointerEvents = 'none';
+        Array.from(uiLayer.children).forEach(c => c.style.pointerEvents = 'none');
+        bottomBar.style.opacity = '0';
+        bottomBar.style.pointerEvents = 'none';
+        toggleBtn.innerText = 'RESTORE UI ⌘';
+      }
     });
 
     // Add CSS transitions to UI elements for smooth fade
@@ -378,4 +441,5 @@
     bottomBar.style.transition = 'opacity 0.3s ease';
   </script>
 </body>
+
 </html>
