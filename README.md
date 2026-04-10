@@ -14,7 +14,7 @@ DeepSleep-Hub is a coordinate-free, cinematic knowledge bridge that ensures your
 Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deployed as a **Developer Mode** extension. It is NOT in the Chrome Web Store yet.
 
 ### 1. Enable Developer Mode
-1. Download the latest production build: [**DeepSleep-Hub-v1.1.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v1.1.zip).
+1. Download the latest production build: [**DeepSleep-Hub-v1.3.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v1.3.zip).
 2. Open Google Chrome (or any Chromium browser like Brave/Edge).
 3. Type `chrome://extensions/` in the address bar and hit Enter.
 4. In the top-right corner, toggle **Developer mode** to **ON**.
