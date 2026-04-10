@@ -88,18 +88,20 @@ function init() {
 }
 
 function createBiologicalBrain() {
+  // Symmetrical and closely packed to form a single anatomical cerebrum shape
   const lobeConfigs = [
-    { name: 'frontal', color: 0x333333, pos: [0, 8, 12], scale: 1.2, ai: 'openai' },
-    { name: 'parietal', color: 0x2a2a35, pos: [0, 12, -2], scale: 1.0, ai: 'codex' },
-    { name: 'temporal', color: 0x352a2a, pos: [8, 4, 2], scale: 0.9, ai: 'claude' },
-    { name: 'temporal_l', color: 0x352a2a, pos: [-8, 4, 2], scale: 0.9, ai: 'claude' },
-    { name: 'occipital', color: 0x2e2a35, pos: [0, 6, -12], scale: 0.8, ai: 'gemini' },
-    { name: 'cerebellum', color: 0x352a2a, pos: [0, -6, -8], scale: 0.7, ai: 'kimi' },
-    { name: 'core', color: 0x332211, pos: [0, 0, 0], scale: 1.0, ai: 'deepsleep' }
+    { name: 'frontal', color: 0x333333, pos: [0, 5, 8], scale: 1.1, ai: 'openai' },
+    { name: 'parietal', color: 0x2a2a35, pos: [0, 8, -3], scale: 1.0, ai: 'codex' },
+    { name: 'temporal_right', color: 0x352a2a, pos: [7, 1, 0], scale: 0.9, ai: 'claude' },
+    { name: 'temporal_left', color: 0x352a2a, pos: [-7, 1, 0], scale: 0.9, ai: 'claude' },
+    { name: 'occipital', color: 0x2e2a35, pos: [0, 2, -10], scale: 0.85, ai: 'gemini' },
+    { name: 'cerebellum', color: 0x352a2a, pos: [0, -6, -8], scale: 0.65, ai: 'kimi' },
+    { name: 'core', color: 0x332211, pos: [0, -1, -2], scale: 0.7, ai: 'deepsleep' }
   ];
   
   lobeConfigs.forEach(config => {
-    const geometry = new THREE.SphereGeometry(10, 64, 64);
+    // We use a base radius of 8 to pack them closely
+    const geometry = new THREE.SphereGeometry(8, 64, 64);
     const posAttribute = geometry.attributes.position;
     const vertex = new THREE.Vector3();
     
@@ -120,12 +122,16 @@ function createBiologicalBrain() {
     lobe.position.set(...config.pos);
     lobe.scale.setScalar(config.scale);
     
-    const haloGeo = new THREE.SphereGeometry(12, 32, 32);
-    const haloMat = new THREE.MeshBasicMaterial({ color: AI_CONFIG[config.ai]?.color || 0xffffff, transparent: true, opacity: 0.03, side: THREE.BackSide, blending: THREE.AdditiveBlending });
-    lobe.add(new THREE.Mesh(haloGeo, haloMat));
+    // We remove the halo, because we want it to look like a solid connected brain
     
     brainGroup.add(lobe);
-    logicalLobes[config.ai] = lobe;
+    logicalLobes[config.name] = lobe;
+    // Map AI to logical lobe (handle multiple lobes for the same AI, like temporal left/right)
+    if (!logicalLobes[config.ai]) {
+        logicalLobes[config.ai] = [lobe];
+    } else {
+        logicalLobes[config.ai].push(lobe);
+    }
   });
 }
 
@@ -133,11 +139,17 @@ function createThoughtNode(ai, text, concept) {
   if (!isInitialized) return;
 
   const config = AI_CONFIG[ai] || AI_CONFIG.openai;
-  const baseLobe = logicalLobes[ai] || logicalLobes['openai'];
+  
+  // Get corresponding lobe instances for this AI
+  const lobeSubArr = logicalLobes[ai] || logicalLobes['openai'];
+  // If multiple lobes match (like temporal left/right), pick one randomly
+  const baseLobe = lobeSubArr[Math.floor(Math.random() * lobeSubArr.length)];
   const basePos = baseLobe.position;
   
-  // 2. SPAWN OUTSIDE THE LOBE Boundary (Neurons branching OUT)
-  const radiusOffset = 18 + Math.random() * 20;
+  // 2. SPAWN EXACTLY INSIDE THE LOBE BOUNDARY
+  // The lobe radius is 8 * scale. We want nodes strictly contained inside.
+  const lobeRadius = 8 * baseLobe.scale.x;
+  const radiusOffset = Math.random() * (lobeRadius - 1.5); // Stay slightly inside the surface
   const theta = Math.random() * Math.PI * 2;
   const phi = Math.acos((Math.random() * 2) - 1);
   
@@ -148,11 +160,17 @@ function createThoughtNode(ai, text, concept) {
   );
 
   let geometry = config.special === 'dream' ? new THREE.IcosahedronGeometry(0.8, 0) : new THREE.SphereGeometry(0.5, 32, 32);
-  const material = new THREE.MeshStandardMaterial({ color: config.color, emissive: config.color, emissiveIntensity: 1.0, transparent: true, opacity: 0.9, roughness: 0.2, metalness: 0.8 });
+  const material = new THREE.MeshStandardMaterial({ color: config.color, emissive: config.color, emissiveIntensity: 2.0, transparent: true, opacity: 1.0, roughness: 0.2, metalness: 0.8 });
   
   const node = new THREE.Mesh(geometry, material);
   node.position.copy(position);
   node.userData = { type: 'thought', ai: ai, text: text, concept: concept };
+
+  // FLASH THE LOBE IT SURFACED IN (Visual reflection)
+  gsapAnimation(baseLobe.material, { emissiveIntensity: 0.8 }, 0.2, "power2.out");
+  setTimeout(() => {
+     gsapAnimation(baseLobe.material, { emissiveIntensity: 0.1 }, 1.0, "power2.out");
+  }, 300);
 
   // 3. CREATE CSS2D HTML LABEL
   if (labelsContainer) {
@@ -163,7 +181,7 @@ function createThoughtNode(ai, text, concept) {
       label.style.fontSize = '12px';
       label.style.fontFamily = 'Inter, sans-serif';
       label.style.fontWeight = '700';
-      label.style.textShadow = '0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,1)';
+      label.style.textShadow = '0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,1), 0 0 1px rgba(255,255,255,0.5)';
       label.style.pointerEvents = 'none';
       label.style.whiteSpace = 'nowrap';
       label.innerText = concept || ai;
@@ -172,7 +190,7 @@ function createThoughtNode(ai, text, concept) {
       node.userData.label = label;
   }
 
-  // 4. CONNECT NEURONAL EDGES
+  // 4. CONNECT NEURONAL EDGES (Keep them neatly connected, staying in brain mostly)
   const targetNode = thoughtNodes.length > 5 && Math.random() > 0.4 ? thoughtNodes[Math.floor(Math.random() * thoughtNodes.length)] : baseLobe;
   createEdge(node, targetNode, config.color);
       
@@ -193,7 +211,7 @@ function createThoughtNode(ai, text, concept) {
 }
 
 function createEdge(nodeA, nodeB, color) {
-  const material = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
+  const material = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending });
   const geometry = new THREE.BufferGeometry().setFromPoints([nodeA.position, nodeB.position]);
   const line = new THREE.Line(geometry, material);
   brainGroup.add(line);
