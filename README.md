@@ -1,57 +1,51 @@
-# DeepSleep-Hub MVP (V2)
+# DeepSleep-Hub (v2.0)
+## The First Model-Agnostic AI Memory Layer
 
-The **Universal AI Memory Brain**. A browser extension that coordinates, extracts, and visualizes a Semantic Knowledge Graph consisting of memories and concepts processed across ChatGPT, Claude, Gemini, and Kimi.
+**Assistants change. Your context doesn't.**
 
-*"Think Minority Report meets biological neural network."*
+DeepSleep-Hub is a coordinate-free, cinematic knowledge bridge that ensures your AI mental map persists across **ChatGPT, Claude, Gemini, and Local Llama**. It acts as the "connective tissue" for your digital intelligence—so when you switch from debugging with Claude to local reasoning with Llama, your neural interface already holds the relevant codebase context.
+
+## 🚀 Quickstart: Installation
+
+Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deployed as a **Developer Mode** extension. It is NOT in the Chrome Web Store yet.
+
+### 1. Enable Developer Mode
+1. Open Google Chrome (or any Chromium browser like Brave/Edge).
+2. Type `chrome://extensions/` in the address bar and hit Enter.
+3. In the top-right corner, toggle **Developer mode** to **ON**.
+
+### 2. Load the Engine
+1. Click the **Load unpacked** button (top left).
+2. Navigate to your local folder where this code is stored: `/Users/keshavsharma/basalt/deepsleep-hub`.
+3. Select the `deepsleep-hub` folder and click **Open**.
+4. You should now see the `DeepSleep Hub` card appear in your extensions list.
+
+### 3. Open your Visual Cortex
+1. Click the **Puzzle Piece** icon in the Chrome toolbar.
+2. Click the **DeepSleep Hub** icon.
+3. In the popup that appears, click **"Enter Semantic Visualization"**.
+4. This will launch the 3D Brain interface into a new tab. Done.
+
+---
+
+## 🧪 Simulation Mode (No AI Required)
+If you want to see the 3D biological visualizations without having to chat with a real LLM:
+1. Load the extension as shown above.
+2. Open [`test.html`](file:///Users/keshavsharma/basalt/deepsleep-hub/test.html) in your browser.
+3. Open the **Semantic Visualization** (`brain.html`) in a second tab via the extension popup.
+4. Keep both tabs visible. Click the **"Generate Fake AI Thoughts"** buttons in the `test.html` tab.
+5. In real-time, watch your `brain.html` populates with concepts and neural edges.
 
 ## Architecture
 
-DeepSleep-Hub is not just a toy sphere visualizer—it's a functioning Knowledge Graph operating completely locally within your browser. 
-
 1. **Extraction Layer**: Content scripts intercept AI conversations in real-time, sending chunks to a background Service Worker.
-2. **Semantic Knowledge Engine**: A background worker determines Concepts and Relationships using Regex patterns (and optionally `transformers.js` via the pipeline).
-3. **Graph Storage**: An IndexedDB implementation wrapped by `Dexie.js` persistently holds all nodes (Concepts), edges (Relationships), calculating *PageRank* metrics to define node scale.
-4. **The Visual Brain**: A hybrid WebGL application merging the physics-directed layout of `Cytoscape.js` (with Cola layout) and advanced visual overlays using `Three.js` (rendering neural bloom filters, dream mist particles, and active lightning animations).
+2. **Semantic Knowledge Engine**: A background worker determines Concepts and Relationships using Regex patterns.
+3. **Graph Storage**: An IndexedDB implementation wrapped by `Dexie.js` persistently holds all nodes (Concepts) and edges (Relationships).
+4. **The Visual Brain**: A hybrid WebGL application merging high-fidelity biological lobe meshes and advanced Three.js atmospheric effects.
 
-## Supported Platforms (Automatic Injection)
-- **ChatGPT**: `#ffffff` (White Frontal Lobe)
-- **Claude**: `#f97316` (Orange Temporal Lobe)
-- **Gemini**: `#a855f7` (Purple Occipital Lobe)
-- **Kimi**: `#ef4444` (Red Cerebellum Lobe)
-- **DeepSleep-Beta**: `#fbbf24` (Gold Hippocampus Dream Mode)
-
----
-
-## How to Install & Use
-
-### 1. Installation
-Because DeepSleep-Hub is a bleeding-edge extension, you install it natively in Chrome Developer Mode:
-1. Open Google Chrome.
-2. Go to `chrome://extensions/` in your URL bar.
-3. Toggle **Developer mode** on (top right corner).
-4. Click **Load unpacked** (top left).
-5. Select the `deepsleep-hub` folder containing the code.
-6. The Neural Brain icon should now appear in your browser's toolbar.
-
-### 2. General Usage
-Once loaded, DeepSleep-Hub silently monitors supported platforms in the background.
-
-1. Click the DeepSleep-Hub icon in your browser toolbar to open the Popup.
-2. Click **Enter Semantic Visualization** to launch `brain.html` in a new tab. This is your personal visual cortex.
-3. Open a new window, go to ChatGPT (or Claude/Gemini), and chat. 
-4. Switch back to your visual cortex window (`brain.html`)—you will see new Concepts spontaneously appear on the graphical canvas alongside connection nodes and dynamic particle effects.
-
----
-
-## 🧪 Testing Locally (Without an AI Account)
-
-If you just want to see the 3D biological visualizations in action without generating 30 real-world RAG queries to Claude, you can use the included `sandbox.html`!
-
-1. Load the extension in Chrome.
-2. Open the file `test.html` in your browser. (e.g., File -> Open File -> `test.html`).
-3. Open `brain.html` via the Extension Popup in a **second tab**.
-4. Inside the `test.html` tab, freely mash the "Generate Fake AI Thoughts" buttons.
-5. In real-time, watch your `brain.html` explode with graph nodes, relationships, and specialized "Dream Mode" particle effects across the screen.
-
-### The "Dream Mode"
-When a node is generated by the DeepSleep-Beta integration (the gold button in testing), the extension applies a highly customized Three.js physical override. The node will emit golden mist, rotate autonomously, throb with light, and showcase sleeping symbols—all seamlessly tracked alongside normal geometric layout graph nodes.
+## Supported Platforms
+- **ChatGPT**: White Frontal Lobe
+- **Claude**: Orange Temporal Lobe
+- **Gemini**: Purple Occipital Lobe
+- **Kimi**: Red Cerebellum Lobe
+- **DeepSleep-Beta**: Gold Hippocampus Core
