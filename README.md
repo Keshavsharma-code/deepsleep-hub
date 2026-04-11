@@ -1,6 +1,6 @@
-# DeepSleep-Hub (v4.0)
+# DeepSleep-Hub (v4.1)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-4.0--stable-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
+[![Version](https://img.shields.io/badge/Version-4.1--stable-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
 [![Extension](https://img.shields.io/badge/Manifest-V3-orange.svg)](manifest.json)
 [![Visuals](https://img.shields.io/badge/Engine-Three.js-lightgrey.svg)](https://threejs.org)
 
@@ -46,7 +46,7 @@ DeepSleep-Hub is a coordinate-free, cinematic knowledge bridge that ensures your
 Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deployed as a **Developer Mode** extension. It is NOT in the Chrome Web Store yet.
 
 ### 1. Enable Developer Mode
-1. Download the latest production build: [**DeepSleep-Hub-v4.0.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v4.0.zip).
+1. Download the latest production build: [**DeepSleep-Hub-v4.1.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v4.1.zip).
 2. Open Google Chrome (or any Chromium browser like Brave/Edge).
 3. Type `chrome://extensions/` in the address bar and hit Enter.
 4. In the top-right corner, toggle **Developer mode** to **ON**.
@@ -63,11 +63,21 @@ Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deploy
 3. In the popup that appears, click **"Enter Semantic Visualization"**.
 4. This will launch the 3D Brain interface into a new tab. Done.
 
-### 4. How to Confirm it's Working
-Once installed, you can verify the connection in 3 seconds:
-*   **The Toolbar**: You will see the glowing brain icon in your browser's extensions bar.
-*   **The Initialization**: Open the brain interface. You should see a single golden node at the core saying **"Neural mesh initialized"**.
-*   **The Pulse**: Type anything into ChatGPT. If you see a subtle green border appear on your AI response, the DeepSleep scout has successfully captured the thought.
+*   **The Pulse**: Type anything into any AI (ChatGPT, Kimi, Grok). When the AI finishes its thought, the floating 🧠 widget will **Pulse Green**. This is your visual proof that the memory was captured.
+*   **The Heartbeat**: Click the floating 🧠. It will **Pulse Blue**, confirming its connection to your local neural database.
+
+---
+
+## 🔗 The Omni-Connection Protocol
+DeepSleep v4.1 is truly universal. It connects every AI in your ecosystem:
+- **Cloud AIs**: ChatGPT, Claude, Gemini, Kimi, Grok, etc.
+- **Local AIs**: Ollama, Open WebUI, and any LLM running on `localhost`.
+
+### How to Sync Memories:
+1.  **Capture**: Open your AI of choice. The **"DEEPSLEEP NEURAL SYNC"** banner will appear at the top.
+2.  **Recall**: Start a new chat on a *different* AI tool.
+3.  **Bridge**: Click the **"FORCE SYNC BRAIN ⚡"** button in the blue banner. 
+4.  **Result**: Your previous context is instantly injected into the current prompt box. No copy-pasting required.
 
 ---
 
