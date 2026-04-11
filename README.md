@@ -23,7 +23,7 @@ DeepSleep v2.3 introduces **Zero-Copy Injection**. You no longer need to copy/pa
 ## 🧠 Why DeepSleep-Hub?
 Assistants change. Your context shouldn't. DeepSleep-Hub unifies every AI interaction into a single, pulsing biological map. It’s not just an extension; it’s a **Second Brain with Chromatic Aberration.**
 
-## 🚀 New in v2.0: Production Hardening
+## 🚀 New in v2.4: Zero-Copy Autorecall
 We have completely re-engineered the core for industrial-strength reliability:
 - **IndexedDB Reliability (Dexie.js)**: Full schema versioning and ACID transactions.
 - **Quota Management**: Proactive storage monitoring with LRU eviction to prevent browser crashes.
@@ -46,7 +46,7 @@ DeepSleep-Hub is a coordinate-free, cinematic knowledge bridge that ensures your
 Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deployed as a **Developer Mode** extension. It is NOT in the Chrome Web Store yet.
 
 ### 1. Enable Developer Mode
-1. Download the latest production build: [**DeepSleep-Hub-v2.0.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v2.0.zip).
+1. Download the latest production build: [**DeepSleep-Hub-v2.4.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v2.4.zip).
 2. Open Google Chrome (or any Chromium browser like Brave/Edge).
 3. Type `chrome://extensions/` in the address bar and hit Enter.
 4. In the top-right corner, toggle **Developer mode** to **ON**.
