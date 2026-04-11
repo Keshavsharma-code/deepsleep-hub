@@ -39,6 +39,14 @@
 
         trigger.onclick = (e) => {
             e.stopPropagation();
+            // Visual Proof of Life (Pulse)
+            trigger.style.boxShadow = '0 0 40px #3b82f6';
+            trigger.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                trigger.style.boxShadow = '0 0 15px rgba(59, 130, 246, 0.4)';
+                trigger.style.transform = 'scale(1)';
+            }, 300);
+
             overlay.classList.toggle('active');
             if (overlay.classList.contains('active')) loadMemories();
         };
