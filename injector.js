@@ -41,6 +41,31 @@
         if (closeBtn) closeBtn.onclick = () => overlay.classList.remove('active');
 
         window.onclick = () => overlay.classList.remove('active');
+        
+        // Autorecall: Check for new chat and inject context automatically
+        setTimeout(autoRecall, 1000);
+    }
+
+    async function autoRecall() {
+        const isNewChat = window.location.href.includes('new') || 
+                         window.location.pathname === '/' || 
+                         document.querySelectorAll('[data-message-author-role]').length === 0;
+        
+        if (isNewChat) {
+            console.log('🧠 DeepSleep: New session detected. Initiating Autorecall...');
+            chrome.runtime.sendMessage({ type: 'GET_RECENT_THOUGHTS' }, (response) => {
+                if (response && response.success && response.thoughts.length > 0) {
+                    const topThought = response.thoughts[0];
+                    const banner = document.createElement('div');
+                    banner.style = 'background: #1e1b4b; color: #818cf8; padding: 8px; font-size: 10px; text-align: center; border-bottom: 1px solid #312e81; font-family: monospace; letter-spacing: 1px;';
+                    banner.innerHTML = `NEURAL SYNC ACTIVE: RECALLED ${topThought.aiSource.toUpperCase()} CONTEXT`;
+                    document.body.prepend(banner);
+                    
+                    // Delay injection to ensure textarea is ready
+                    setTimeout(() => injectContext(topThought, true), 1000);
+                }
+            });
+        }
     }
 
     async function loadMemories() {
@@ -65,40 +90,38 @@
         });
     }
 
-    function injectContext(thought) {
-        // Find AI input areas
+    function injectContext(thought, isAuto = false) {
         const textareas = [
-            document.querySelector('#prompt-textarea'), // ChatGPT
-            document.querySelector('[contenteditable="true"]'), // General LLMs
-            document.querySelector('textarea.m-0') // Generic fallback
+            document.querySelector('#prompt-textarea'),
+            document.querySelector('[contenteditable="true"]'),
+            document.querySelector('textarea.m-0')
         ];
 
         const target = textareas.find(t => t !== null);
         if (target) {
-            const contextText = `\n\n[DeepSleep Memory | Source: ${thought.aiSource.toUpperCase()}]\nContext: ${thought.name}\n\n`;
+            const contextText = isAuto ? 
+                `[Neural Autorecall Enabled | Perspective: Previous ${thought.aiSource.toUpperCase()} Session]\nContext: ${thought.name}\n---\n` :
+                `\n\n[DeepSleep Memory | Source: ${thought.aiSource.toUpperCase()}]\nContext: ${thought.name}\n\n`;
             
             if (target.tagName === 'TEXTAREA') {
-                const start = target.selectionStart;
-                const end = target.selectionEnd;
-                target.value = target.value.substring(0, start) + contextText + target.value.substring(end);
+                target.value = contextText + target.value;
                 target.dispatchEvent(new Event('input', { bubbles: true }));
             } else {
-                // For contenteditable
                 target.focus();
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(target);
+                range.collapse(true); // Start of box
+                selection.removeAllRanges();
+                selection.addRange(range);
                 document.execCommand('insertText', false, contextText);
             }
             
-            // Visual feedback
-            const overlay = document.querySelector('.deepsleep-overlay');
-            overlay.classList.remove('active');
-            
-            console.log('[DeepSleep] Context injected successfully.');
-        } else {
-            console.warn('[DeepSleep] No chat input found for injection.');
-            // Fallback to clipboard if injection fails
-            const text = `[DeepSleep Memory | Source: ${thought.aiSource.toUpperCase()}]\nContext: ${thought.name}`;
-            navigator.clipboard.writeText(text);
-            alert('Could not find input box. Context copied to clipboard instead!');
+            if (!isAuto) {
+                const overlay = document.querySelector('.deepsleep-overlay');
+                overlay.classList.remove('active');
+            }
+            console.log('[DeepSleep] Context injected.');
         }
     }
 
