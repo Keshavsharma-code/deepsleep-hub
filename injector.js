@@ -5,11 +5,12 @@
     console.log(`🧠 [DeepSleep ${DS_VERSION}] Initializing Industrial Injector...`);
 
     const PLATFORM_SELECTORS = {
-        chatgpt: '#prompt-textarea',
+        chatgpt: '#prompt-textarea, [data-testid="chatgpt-prompt-textarea"]',
         claude: 'div[contenteditable="true"][aria-label*="Claude"], .ProseMirror',
         gemini: 'div[contenteditable="true"][aria-label*="Gemini"], .ql-editor',
-        kimi: 'div[contenteditable="true"], .input-box textarea',
-        generic: '[contenteditable="true"], textarea'
+        kimi: '.chat-input-editor[role="textbox"], div[contenteditable="true"][aria-label*="Kimi"], .input-box textarea',
+        grok: 'textarea[placeholder*="Grok"], [role="textbox"][aria-label*="Grok"]',
+        generic: '[role="textbox"], [contenteditable="true"], textarea'
     };
 
     function createUI() {
