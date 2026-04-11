@@ -5,11 +5,12 @@
     console.log(`🧠 [DeepSleep ${DS_VERSION}] Initializing Industrial Injector...`);
 
     const PLATFORM_SELECTORS = {
-        chatgpt: '#prompt-textarea, [data-testid="chatgpt-prompt-textarea"]',
-        claude: 'div[contenteditable="true"][aria-label*="Claude"], .ProseMirror',
+        chatgpt: '#prompt-textarea, [data-testid="chatgpt-prompt-textarea"], [role="textbox"][aria-label*="ChatGPT"]',
+        claude: 'div[contenteditable="true"][aria-label*="Claude"], .ProseMirror, [role="textbox"][aria-label*="Claude"]',
         gemini: 'div[contenteditable="true"][aria-label*="Gemini"], .ql-editor',
         kimi: '.chat-input-editor[role="textbox"], div[contenteditable="true"][aria-label*="Kimi"], .input-box textarea',
-        grok: 'textarea[placeholder*="Grok"], [role="textbox"][aria-label*="Grok"]',
+        grok: 'textarea[placeholder*="Grok"], [role="textbox"][aria-label*="Grok"], .public-DraftEditor-content',
+        local: '[role="textbox"], textarea.textarea, .chat-input textarea',
         generic: '[role="textbox"], [contenteditable="true"], textarea'
     };
 
@@ -52,15 +53,20 @@
     }
 
     async function autoRecall() {
-        const hasMessages = document.querySelectorAll('[data-message-author-role]').length > 0;
-        if (hasMessages) return; // Only for fresh sessions
-
-        chrome.runtime.sendMessage({ type: 'GET_RECENT_THOUGHTS' }, (response) => {
-            if (response && response.success && response.thoughts && response.thoughts.length > 0) {
-                const thought = response.thoughts[0];
-                showBanner(thought);
-            }
-        });
+        const hasMessages = document.querySelectorAll('[data-message-author-role], .message, .chat-line').length > 0;
+        const isNewChat = window.location.href.includes('new') || 
+                         window.location.pathname === '/' || 
+                         !hasMessages;
+        
+        if (isNewChat) {
+            console.log('🧠 DeepSleep: Fresh session detected. Searching for neural context...');
+            chrome.runtime.sendMessage({ type: 'GET_RECENT_THOUGHTS' }, (response) => {
+                if (response && response.success && response.thoughts && response.thoughts.length > 0) {
+                    const thought = response.thoughts[0];
+                    showBanner(thought);
+                }
+            });
+        }
     }
 
     function showBanner(thought) {
@@ -72,18 +78,20 @@
         banner.innerHTML = `
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="animation: ds-pulse 2s infinite">📡</span>
-                <span style="color: #60a5fa; font-size: 11px; font-weight: 800; letter-spacing: 1px;">DEEPSLEEP NEURAL SYNC ACTIVE [v2.5]</span>
-                <span style="color: #94a3b8; font-size: 10px;">Detected: ${thought.aiSource.toUpperCase()}</span>
+                <span style="color: #60a5fa; font-size: 11px; font-weight: 800; letter-spacing: 1px;">DEEPSLEEP NEURAL SYNC ACTIVE [v3.2]</span>
+                <span style="color: #94a3b8; font-size: 10px;">Context Found: ${thought.aiSource.toUpperCase()}</span>
             </div>
             <div style="display: flex; gap: 8px;">
-                <button id="ds-force-sync" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer;">FORCE SYNC BRAIN ⚡</button>
+                <button id="ds-force-sync" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s;">FORCE SYNC BRAIN ⚡</button>
                 <button id="ds-hide-banner" style="background: transparent; color: #64748b; border: 1px solid #334155; padding: 6px; border-radius: 4px; font-size: 10px; cursor: pointer;">×</button>
             </div>
             <style>
                 @keyframes ds-pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+                #ds-force-sync:hover { background: #2563eb; transform: scale(1.05); }
             </style>
         `;
-        document.body.prepend(banner);
+        // Top-level attachment to prevent Virtual DOM overwrite
+        document.documentElement.appendChild(banner);
 
         document.getElementById('ds-force-sync').onclick = () => injectContext(thought, true);
         document.getElementById('ds-hide-banner').onclick = () => banner.remove();
