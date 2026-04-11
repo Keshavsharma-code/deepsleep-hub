@@ -1,21 +1,20 @@
 {
   "manifest_version": 3,
   "name": "DeepSleep Hub",
-  "version": "2.4.0",
+  "version": "3.0.0",
+  "description": "Cross-AI Neural Memory Bridge for a persistent collective intelligence.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage", "activeTab", "scripting", "alarms"],
+  "permissions": ["storage", "activeTab", "scripting", "clipboardWrite", "alarms"],
   "host_permissions": [
     "https://chat.openai.com/*",
     "https://chatgpt.com/*",
     "https://claude.ai/*",
     "https://gemini.google.com/*",
-    "https://kimi.moonshot.cn/*",
-    "http://localhost:*/*",
-    "http://127.0.0.1:*/*"
+    "https://kimi.moonshot.cn/*"
   ],
   "action": {
     "default_popup": "popup.html"
@@ -25,34 +24,15 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
-      "js": ["message-queue.js", "content-gpt.js", "injector.js"],
-      "css": ["injector.css"],
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
       "run_at": "document_idle"
-    },
+    }
+  ],
+  "web_accessible_resources": [
     {
-      "matches": ["https://claude.ai/*"],
-      "js": ["message-queue.js", "content-claude.js", "injector.js"],
-      "css": ["injector.css"],
-      "run_at": "document_idle"
-    },
-    {
-      "matches": ["https://gemini.google.com/*"],
-      "js": ["message-queue.js", "content-gemini.js", "injector.js"],
-      "css": ["injector.css"],
-      "run_at": "document_idle"
-    },
-    {
-      "matches": ["https://kimi.moonshot.cn/*"],
-      "js": ["message-queue.js", "content-kimi.js", "injector.js"],
-      "css": ["injector.css"],
-      "run_at": "document_idle"
-    },
-    {
-      "matches": ["http://localhost:*/*", "http://127.0.0.1:*/*"],
-      "js": ["message-queue.js", "content-local.js", "injector.js"],
-      "css": ["injector.css"],
-      "run_at": "document_idle"
+      "resources": ["brain.html", "lib/*", "icons/*"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

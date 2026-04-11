@@ -1,654 +1,160 @@
-// DeepSleep Hub - 3D Neural Visualization
+/* brain.js - DeepSleep Hub v3.0 3D Visualizer */
 
-console.log('🧠 Brain.js loading...');
+let scene, camera, renderer, nodes = [], lines = [];
+let raycaster, mouse, hoveredNode = null;
+const tooltip = document.getElementById('tooltip');
 
-// Global variables
-let scene, camera, renderer, controls, composer;
-let brainGroup, thoughtNodes = [], edges = [];
-let raycaster, mouse;
-let isInitialized = false;
-let labelsContainer;
-let nodeInjectMem = {};
-
-// Lobe storage
-const logicalLobes = {};
-
-// AI Color Configuration
-const AI_CONFIG = {
-  openai: { color: 0xffffff, name: 'ChatGPT' },
-  claude: { color: 0xf97316, name: 'Claude' },
-  gemini: { color: 0xa855f7, name: 'Gemini' },
-  kimi: { color: 0xef4444, name: 'Kimi' },
-  codex: { color: 0x3b82f6, name: 'Codex' },
-  deepsleep: { color: 0xfbbf24, name: 'DeepSleep', special: 'dream' }
+const COLORS = {
+    chatgpt: 0x10a37f,
+    claude: 0xd97757,
+    gemini: 0x4285f4,
+    kimi: 0xef4444
 };
 
 function init() {
-  console.log('Initializing Three.js...');
-  document.getElementById('loading').style.display = 'none';
-
-  try {
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x050508);
-    scene.fog = new THREE.FogExp2(0x050508, 0.008);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 80;
 
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 30, 80);
-
-    const canvasContainer = document.getElementById('canvas-container');
-    labelsContainer = document.getElementById('labels-container');
-
-    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x050508, 1);
-    canvasContainer.appendChild(renderer.domElement);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    document.body.appendChild(renderer.domElement);
 
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-    controls.minDistance = 5;
-    controls.maxDistance = 200;
-    controls.enablePan = true; // Allow moving the brain left/right/up/down
-    controls.panSpeed = 1.0;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.5; // Spins slowly by itself but stops when you grab it!
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
 
-    try {
-      const renderScene = new THREE.RenderPass(scene, camera);
-      const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.0, 0.4, 0.85);
-      bloomPass.strength = 1.8;
-
-      composer = new THREE.EffectComposer(renderer);
-      composer.addPass(renderScene);
-      composer.addPass(bloomPass);
-    } catch (e) {
-      console.warn("Post-processing failed. Falling back to basic renderer.", e);
-      composer = { render: () => renderer.render(scene, camera), setSize: () => { } };
-    }
-
-    scene.add(new THREE.AmbientLight(0x404040, 4));
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
-    directionalLight.position.set(10, 20, 10);
-    scene.add(directionalLight);
-
-    brainGroup = new THREE.Group();
-    scene.add(brainGroup);
-
-    // 0. CREATE NEURAL STARFIELD (Depth & Scale)
-    createStarfield();
-
-    // 1. CREATE BIOLOGICAL MESH LOBES
-    createBiologicalBrain();
+    const pointLight = new THREE.PointLight(0xffaa00, 2);
+    pointLight.position.set(0, 0, 50);
+    scene.add(pointLight);
 
     raycaster = new THREE.Raycaster();
     mouse = new THREE.Vector2();
-    window.addEventListener('click', onMouseClick);
+
     window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('resize', onWindowResize);
+    window.addEventListener('click', onClick);
+    window.addEventListener('resize', onResize);
 
-    isInitialized = true;
-    console.log('🚀 Brain initialization complete!');
-
+    loadData();
     animate();
-
-    setTimeout(() => { loadRealKnowledge(); }, 1000);
-
-  } catch (error) {
-    console.error('❌ Initialization failed:', error);
-    document.getElementById('loading').innerHTML = `<span style="color: #ef4444;">Error: ${error.message}</span>`;
-  }
 }
 
-function createBiologicalBrain() {
-  const lobeConfigs = [
-    { name: 'frontal', color: 0xffffff, pos: [0, 8, 14], scale: 1.8, ai: 'openai' },
-    { name: 'parietal', color: 0x3b82f6, pos: [0, 14, -4], scale: 1.6, ai: 'codex' },
-    { name: 'temporal_right', color: 0xf97316, pos: [12, 2, 2], scale: 1.4, ai: 'claude' },
-    { name: 'temporal_left', color: 0xf97316, pos: [-12, 2, 2], scale: 1.4, ai: 'claude' },
-    { name: 'occipital', color: 0xa855f7, pos: [0, 4, -15], scale: 1.3, ai: 'gemini' },
-    { name: 'cerebellum', color: 0xef4444, pos: [0, -8, -10], scale: 1.1, ai: 'kimi' },
-    { name: 'core', color: 0xfbbf24, pos: [0, -1, -2], scale: 1.0, ai: 'deepsleep' }
-  ];
+function loadData() {
+    chrome.runtime.sendMessage({ type: 'GET_MEMORIES' }, (response) => {
+        if (response && response.memories) {
+            buildGraph(response.memories);
+        }
+    });
+}
 
-  lobeConfigs.forEach(config => {
-    // We use a base radius of 8 to pack them closely
-    const geometry = new THREE.SphereGeometry(8, 64, 64);
-    const posAttribute = geometry.attributes.position;
-    const vertex = new THREE.Vector3();
+// Spherical distribution using Golden Angle Spiral
+function buildGraph(memories) {
+    const total = memories.length;
+    const phi = Math.PI * (3 - Math.sqrt(5)); // golden angle
+    const radius = 40;
 
-    for (let i = 0; i < posAttribute.count; i++) {
-      vertex.fromBufferAttribute(posAttribute, i);
-      const noise1 = Math.sin(vertex.x * 0.8) * Math.cos(vertex.y * 0.8) * Math.sin(vertex.z * 0.8);
-      const noise2 = Math.sin(vertex.x * 2.0) * Math.cos(vertex.y * 2.0) * 0.3;
-      vertex.multiplyScalar(1 + (noise1 * 0.4) + (noise2 * 0.15));
-      posAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
-    }
-    geometry.computeVertexNormals();
+    memories.forEach((memory, i) => {
+        const y = 1 - (i / (total - 1)) * 2;
+        const r = Math.sqrt(1 - y * y);
+        const theta = phi * i;
 
-    const material = new THREE.MeshStandardMaterial({
-      color: config.color, emissive: config.color, emissiveIntensity: 0.3, roughness: 0.3, metalness: 0.7, transparent: true, opacity: 0.65
+        const x = Math.cos(theta) * r * radius;
+        const z = Math.sin(theta) * r * radius;
+        const posY = y * radius;
+
+        createNode(memory, x, posY, z);
     });
 
-    const lobe = new THREE.Mesh(geometry, material);
-    lobe.position.set(...config.pos);
-    lobe.scale.setScalar(config.scale);
-    lobe.userData = { isLobe: true, ai: config.ai, name: config.name, scaleBase: config.scale };
+    createLines();
+}
 
-    // Macro Label
-    if (labelsContainer) {
-      const mLabel = document.createElement('div');
-      mLabel.className = 'macro-label';
-      mLabel.style.position = 'absolute';
-      mLabel.style.color = '#' + config.color.toString(16).padStart(6, '0');
-      mLabel.style.fontSize = '16px';
-      mLabel.style.fontFamily = 'Inter, sans-serif';
-      mLabel.style.fontWeight = '800';
-      mLabel.style.textTransform = 'uppercase';
-      mLabel.style.letterSpacing = '1px';
-      mLabel.style.textShadow = '0 4px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,1)';
-      mLabel.style.pointerEvents = 'none';
-      mLabel.style.whiteSpace = 'nowrap';
-      mLabel.style.transition = 'opacity 0.3s ease';
-      mLabel.innerText = config.ai + ' Cluster';
-      labelsContainer.appendChild(mLabel);
-      lobe.userData.macroLabel = mLabel;
+function createNode(memory, x, y, z) {
+    const geometry = new THREE.SphereGeometry(2, 32, 32);
+    const material = new THREE.MeshPhongMaterial({
+        color: COLORS[memory.source] || 0xffffff,
+        emissive: COLORS[memory.source] || 0xffffff,
+        emissiveIntensity: 0.2,
+        shininess: 100
+    });
+
+    const sphere = new THREE.Mesh(geometry, material);
+    sphere.position.set(x, y, z);
+    sphere.userData = memory;
+    sphere.originalScale = 1;
+    
+    scene.add(sphere);
+    nodes.push(sphere);
+}
+
+function createLines() {
+    const material = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 0.1, transparent: true });
+    for (let i = 0; i < nodes.length - 1; i++) {
+        const geometry = new THREE.BufferGeometry().setFromPoints([
+            nodes[i].position,
+            nodes[i+1].position
+        ]);
+        const line = new THREE.Line(geometry, material);
+        scene.add(line);
+        lines.push(line);
     }
-
-    brainGroup.add(lobe);
-    logicalLobes[config.name] = lobe;
-    // Map AI to logical lobe (handle multiple lobes for the same AI, like temporal left/right)
-    if (!logicalLobes[config.ai]) {
-      logicalLobes[config.ai] = [lobe];
-    } else {
-      logicalLobes[config.ai].push(lobe);
-    }
-  });
-}
-
-function createStarfield() {
-  const geometry = new THREE.BufferGeometry();
-  const vertices = [];
-  for (let i = 0; i < 2000; i++) {
-    vertices.push(
-      THREE.MathUtils.randFloatSpread(500),
-      THREE.MathUtils.randFloatSpread(500),
-      THREE.MathUtils.randFloatSpread(500)
-    );
-  }
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  const material = new THREE.PointsMaterial({ color: 0x444466, size: 0.7, transparent: true, opacity: 0.5 });
-  const stars = new THREE.Points(geometry, material);
-  scene.add(stars);
-
-  // Slow background drift
-  function rotateStars() {
-    stars.rotation.y += 0.0001;
-    stars.rotation.x += 0.00005;
-    requestAnimationFrame(rotateStars);
-  }
-  rotateStars();
-}
-
-function createThoughtNode(ai, text, concept) {
-  if (!isInitialized) return;
-
-  const config = AI_CONFIG[ai] || AI_CONFIG.openai;
-
-  // Get corresponding lobe instances for this AI
-  const lobeSubArr = logicalLobes[ai] || logicalLobes['openai'];
-  // If multiple lobes match (like temporal left/right), pick one randomly
-  const baseLobe = lobeSubArr[Math.floor(Math.random() * lobeSubArr.length)];
-  const basePos = baseLobe.position;
-
-  // 2. SPAWN EXACTLY INSIDE THE LOBE BOUNDARY
-  // The lobe radius is 8 * scale. We want nodes strictly contained inside.
-  const lobeRadius = 8 * baseLobe.scale.x;
-  const radiusOffset = Math.random() * (lobeRadius - 1.5); // Stay slightly inside the surface
-  const theta = Math.random() * Math.PI * 2;
-  const phi = Math.acos((Math.random() * 2) - 1);
-
-  const position = new THREE.Vector3(
-    basePos.x + radiusOffset * Math.sin(phi) * Math.cos(theta),
-    basePos.y + radiusOffset * Math.sin(phi) * Math.sin(theta),
-    basePos.z + radiusOffset * Math.cos(phi)
-  );
-
-  let geometry = config.special === 'dream' ? new THREE.IcosahedronGeometry(0.8, 0) : new THREE.SphereGeometry(0.5, 32, 32);
-  const material = new THREE.MeshStandardMaterial({ color: config.color, emissive: config.color, emissiveIntensity: 2.0, transparent: true, opacity: 1.0, roughness: 0.2, metalness: 0.8 });
-
-  const node = new THREE.Mesh(geometry, material);
-  node.position.copy(position);
-  node.userData = { type: 'thought', ai: ai, text: text, concept: concept };
-
-  // FLASH THE LOBE IT SURFACED IN (Visual reflection)
-  gsapAnimation(baseLobe.material, { emissiveIntensity: 0.8 }, 0.2, "power2.out");
-  setTimeout(() => {
-    gsapAnimation(baseLobe.material, { emissiveIntensity: 0.1 }, 1.0, "power2.out");
-  }, 300);
-
-  // 3. CREATE CSS2D HTML LABEL
-  if (labelsContainer) {
-    const label = document.createElement('div');
-    label.className = 'node-label';
-    label.style.position = 'absolute';
-    label.style.color = '#' + config.color.toString(16).padStart(6, '0');
-    label.style.fontSize = '12px';
-    label.style.fontFamily = 'Inter, sans-serif';
-    label.style.fontWeight = '700';
-    label.style.textShadow = '0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,1), 0 0 1px rgba(255,255,255,0.5)';
-    label.style.pointerEvents = 'none';
-    label.style.whiteSpace = 'nowrap';
-    label.innerText = concept || ai;
-    label.style.transition = 'opacity 0.2s';
-    labelsContainer.appendChild(label);
-    node.userData.label = label;
-  }
-
-  // 4. CONNECT NEURONAL EDGES (Keep them neatly connected, staying in brain mostly)
-  const targetNode = thoughtNodes.length > 5 && Math.random() > 0.4 ? thoughtNodes[Math.floor(Math.random() * thoughtNodes.length)] : baseLobe;
-  createEdge(node, targetNode, config.color);
-
-  createInkSplat(position, config.color);
-
-  brainGroup.add(node);
-  thoughtNodes.push(node);
-
-  nodeInjectMem[ai] = concept || text.substring(0, 30);
-
-  node.scale.set(0.01, 0.01, 0.01);
-  gsapAnimation(node.scale, { x: 1.5, y: 1.5, z: 1.5 }, 0.6, "back.out");
-
-  addThoughtToUI(ai, concept || text.substring(0, 30), config.color);
-  updateNeuralPressure();
-
-  if (thoughtNodes.length > 60) removeOldestNode();
-
-  return node;
-}
-
-function createEdge(nodeA, nodeB, color) {
-  const material = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending });
-  const geometry = new THREE.BufferGeometry().setFromPoints([nodeA.position, nodeB.position]);
-  const line = new THREE.Line(geometry, material);
-  brainGroup.add(line);
-  edges.push({ line, nodeA, nodeB });
-}
-
-function createInkSplat(position, color) {
-  const particleCount = 30;
-  const geometry = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  const velocities = [];
-
-  for (let i = 0; i < particleCount; i++) {
-    positions[i * 3] = position.x;
-    positions[i * 3 + 1] = position.y;
-    positions[i * 3 + 2] = position.z;
-    velocities.push({ x: (Math.random() - 0.5) * 1.5, y: (Math.random() - 0.5) * 1.5, z: (Math.random() - 0.5) * 1.5 });
-  }
-
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  const material = new THREE.PointsMaterial({ color: color, size: 0.6, transparent: true, opacity: 1, blending: THREE.AdditiveBlending });
-  const particles = new THREE.Points(geometry, material);
-  scene.add(particles);
-
-  let frame = 0;
-  function animateSplat() {
-    frame++;
-    const pos = particles.geometry.attributes.position.array;
-    for (let i = 0; i < particleCount; i++) {
-      pos[i * 3] += velocities[i].x; pos[i * 3 + 1] += velocities[i].y; pos[i * 3 + 2] += velocities[i].z;
-    }
-    particles.geometry.attributes.position.needsUpdate = true;
-    material.opacity -= 0.02;
-    if (material.opacity > 0 && frame < 50) requestAnimationFrame(animateSplat);
-    else { scene.remove(particles); geometry.dispose(); material.dispose(); }
-  }
-  animateSplat();
-}
-
-function addThoughtToUI(ai, concept, color) {
-  const container = document.getElementById('thoughts-list');
-  const div = document.createElement('div');
-  div.className = 'thought';
-  div.style.borderLeftColor = '#' + color.toString(16).padStart(6, '0');
-  div.innerHTML = `<div class="thought-ai">${AI_CONFIG[ai]?.name || ai}</div><div class="thought-text">${concept}</div>`;
-  container.insertBefore(div, container.firstChild);
-  if (container.children.length > 8) container.removeChild(container.lastChild);
-}
-
-function updateNeuralPressure() {
-  const percent = Math.min((thoughtNodes.length / 60) * 100, 100);
-  const nodeCountEl = document.getElementById('node-count');
-  if (nodeCountEl) nodeCountEl.textContent = thoughtNodes.length;
-  const pressureTextEl = document.getElementById('pressure-text');
-  if (pressureTextEl) pressureTextEl.textContent = Math.floor(percent) + '%';
-  document.getElementById('pressure-bar').style.width = percent + '%';
-}
-
-function removeOldestNode() {
-  const old = thoughtNodes.shift();
-  if (old) {
-    if (old.userData.label) old.userData.label.remove();
-    createInkSplat(old.position, 0xff0000);
-    brainGroup.remove(old);
-
-    for (let i = edges.length - 1; i >= 0; i--) {
-      if (edges[i].nodeA === old || edges[i].nodeB === old) {
-        brainGroup.remove(edges[i].line);
-        edges.splice(i, 1);
-      }
-    }
-    old.geometry.dispose(); old.material.dispose();
-  }
 }
 
 function onMouseMove(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(thoughtNodes);
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  thoughtNodes.forEach(node => { node.material.emissiveIntensity = 1.0; });
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(nodes);
 
-  if (intersects.length > 0) {
-    document.body.style.cursor = 'pointer';
-    intersects[0].object.material.emissiveIntensity = 3.0;
-  } else {
-    document.body.style.cursor = 'default';
-  }
-}
-
-function onMouseClick(event) {
-  if (!isInitialized) return;
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(thoughtNodes);
-
-  if (intersects.length > 0) {
-    const node = intersects[0].object;
-    const data = node.userData;
-
-    // Project node position to screen for coordinates
-    tempV.copy(node.position);
-    node.localToWorld(tempV);
-    tempV.project(camera);
-
-    const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
-    const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
-
-    // Use the trace overlay for left clicks too for consistency and reliability
-    const overlay = document.getElementById('trace-overlay');
-    document.getElementById('trace-ai-type').innerText = data.ai.toUpperCase();
-    document.getElementById('trace-ai-type').style.color = '#' + AI_CONFIG[data.ai]?.color.toString(16).padStart(6, '0');
-    document.getElementById('trace-content').innerText = data.text || "No context data available.";
-    document.getElementById('trace-node-id').innerText = node.id;
-    document.getElementById('trace-lobe').innerText = (data.concept || "UNKNOWN").toUpperCase();
-
-    overlay.classList.add('active');
-  } else {
-    // Reset view
-    gsapAnimation(camera.position, { x: 0, y: 30, z: 80 }, 1.5, "power2.out");
-    gsapAnimation(controls.target, { x: 0, y: 0, z: 0 }, 1.5, "power2.out");
-
-    const overlay = document.getElementById('trace-overlay');
-    overlay.classList.remove('active');
-
-    const lobeIntersects = raycaster.intersectObjects(Object.values(logicalLobes).flat());
-    if (lobeIntersects.length > 0) {
-      const lobe = lobeIntersects[0].object;
-      createThoughtNode(lobe.userData.ai, "Manual Node Injection: Exploratory Thought Process", "Manual Pulse");
+    if (intersects.length > 0) {
+        if (hoveredNode !== intersects[0].object) {
+            if (hoveredNode) hoveredNode.scale.set(1, 1, 1);
+            hoveredNode = intersects[0].object;
+            hoveredNode.scale.set(1.5, 1.5, 1.5);
+            
+            tooltip.style.display = 'block';
+            tooltip.innerHTML = `<strong>${hoveredNode.userData.source.toUpperCase()}</strong><br>${hoveredNode.userData.text.substring(0, 50)}...`;
+        }
+        tooltip.style.left = (event.clientX + 10) + 'px';
+        tooltip.style.top = (event.clientY + 10) + 'px';
+    } else {
+        if (hoveredNode) hoveredNode.scale.set(1, 1, 1);
+        hoveredNode = null;
+        tooltip.style.display = 'none';
     }
-  }
 }
 
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') {
-    const keys = Object.keys(AI_CONFIG);
-    const rAi = keys[Math.floor(Math.random() * keys.length)];
-    createThoughtNode(rAi, "Universal Spontaneous Neural Injection Fired", "Spontaneous Injection");
-  }
-  if (e.key === 'z' || e.key === 'Z') {
-    toggleZenMode();
-  }
-});
-
-function toggleZenMode() {
-  const panels = document.querySelectorAll('.panel, #toggle-ui');
-  const isHidden = panels[0].style.opacity === '0';
-  panels.forEach(p => {
-    p.style.opacity = isHidden ? '1' : '0';
-    p.style.pointerEvents = isHidden ? 'auto' : 'none';
-  });
+function onClick() {
+    if (hoveredNode) {
+        const memory = hoveredNode.userData;
+        navigator.clipboard.writeText(memory.text);
+        
+        // Flash green
+        const originalColor = hoveredNode.material.color.clone();
+        hoveredNode.material.color.set(0x00ff00);
+        setTimeout(() => hoveredNode.material.color.copy(originalColor), 500);
+    }
 }
-
-function onRightClick(event) {
-  event.preventDefault();
-  if (!isInitialized) return;
-
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(thoughtNodes);
-
-  const overlay = document.getElementById('trace-overlay');
-  if (intersects.length > 0) {
-    const node = intersects[0].object;
-    const data = node.userData;
-
-    document.getElementById('trace-ai-type').innerText = data.ai.toUpperCase();
-    document.getElementById('trace-ai-type').style.color = '#' + AI_CONFIG[data.ai]?.color.toString(16).padStart(6, '0');
-    document.getElementById('trace-content').innerText = data.text || "No context data available for this node.";
-    document.getElementById('trace-node-id').innerText = node.id;
-    document.getElementById('trace-lobe').innerText = (data.concept || "UNKNOWN").toUpperCase();
-
-    overlay.classList.add('active');
-  } else {
-    overlay.classList.remove('active');
-  }
-}
-
-// Close overlay on left click elsewhere
-window.addEventListener('mousedown', (e) => {
-  const overlay = document.getElementById('trace-overlay');
-  if (e.button === 0 && !overlay.contains(e.target)) {
-    overlay.classList.remove('active');
-  }
-});
-
-window.addEventListener('contextmenu', onRightClick);
-
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  composer.setSize(window.innerWidth, window.innerHeight);
-}
-
-const tempV = new THREE.Vector3();
 
 function animate() {
-  requestAnimationFrame(animate);
-  if (!isInitialized) return;
+    requestAnimationFrame(animate);
+    
+    // Slow rotation of the whole mesh
+    scene.rotation.y += 0.002;
+    scene.rotation.x += 0.001;
 
-  controls.update();
+    // Gentle floating for each node
+    nodes.forEach((node, i) => {
+        node.position.y += Math.sin(Date.now() * 0.001 + i) * 0.02;
+    });
 
-  const time = Date.now() * 0.001;
-  const globalDist = camera.position.length();
-
-  // Bio-rhythmic Pulse (Lobe Breathing)
-  Object.values(logicalLobes).flat().forEach((lobe, idx) => {
-    // Breathing scale: 1.0 to 1.05
-    const breathe = 1 + Math.sin(time * 0.5 + idx) * 0.03;
-    lobe.scale.setScalar(breathe * (lobe.userData.scaleBase || 1.0));
-
-    // Glowing pulse: 0.1 to 0.4
-    if (lobe.material.emissive) {
-      lobe.material.emissiveIntensity = 0.2 + Math.sin(time + idx) * 0.15;
-    }
-  });
-
-  thoughtNodes.forEach((node, i) => {
-    node.position.y += Math.sin(time * 2 + i) * 0.02;
-
-    // 5. PROJECT 3D VECTOR TO 2D SCREEN FOR TEXT LABELS
-    if (node.userData.label) {
-      tempV.copy(node.position);
-      node.localToWorld(tempV);
-      tempV.project(camera);
-
-      if (tempV.z > 1) {
-        node.userData.label.style.display = 'none';
-      } else {
-        node.userData.label.style.display = 'block';
-        const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
-        const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
-        node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 20}px)`;
-
-        // Multi-level zoom mappings
-        // Level 1: > 100 (Far) - Only macro lobes visible
-        // Level 2: 60 to 100 (Medium) - Macro lobes fade out, medium labels appear
-        // Level 3: 30 to 60 (Close) - Tiny nodes fully bright and sharp
-        // Level 4: < 30 (Super Close) - Maximum interactivity
-
-        if (globalDist > 90) {
-          node.userData.label.style.opacity = 0; // Level 1: Labels hidden
-          node.material.opacity = 0.2; // Nodes fade
-        } else if (globalDist > 50) {
-          // Level 2: Nodes fading in, labels visible but soft
-          node.userData.label.style.opacity = ((90 - globalDist) / 40) * 0.6;
-          node.material.opacity = 0.5;
-          node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 12}px) scale(0.8)`;
-        } else {
-          // Level 3 & 4: Deep focus
-          node.userData.label.style.opacity = 1;
-          node.material.opacity = 1.0;
-          node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 20}px) scale(1.1)`;
-
-          if (globalDist < 30) {
-            node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 25}px) scale(1.3)`;
-            node.userData.label.style.zIndex = 100;
-          }
-        }
-      }
-    }
-  });
-
-  // Calculate Macro Label screen positions & Multi-level Zoom Opacity
-  Object.values(logicalLobes).flat().forEach(lobe => {
-    if (lobe.userData.macroLabel) {
-      tempV.copy(lobe.position);
-      lobe.localToWorld(tempV);
-      tempV.project(camera);
-
-      if (tempV.z > 1) {
-        lobe.userData.macroLabel.style.display = 'none';
-      } else {
-        lobe.userData.macroLabel.style.display = 'block';
-        const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
-        const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
-        lobe.userData.macroLabel.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
-
-        // Only visible at Level 1 & 2
-        if (globalDist > 100) {
-          lobe.userData.macroLabel.style.opacity = 0.8;
-        } else if (globalDist > 60) {
-          lobe.userData.macroLabel.style.opacity = ((globalDist - 60) / 40);
-        } else {
-          lobe.userData.macroLabel.style.opacity = 0; // Hidden closely
-        }
-
-        // Latest concept logic
-        if (nodeInjectMem && nodeInjectMem[lobe.userData.ai]) {
-          lobe.userData.macroLabel.innerText = nodeInjectMem[lobe.userData.ai];
-        }
-      }
-    }
-  });
-
-  // Animate dynamic synapse trails
-  edges.forEach((edge, i) => {
-    const positions = edge.line.geometry.attributes.position.array;
-    positions[0] = edge.nodeA.position.x; positions[1] = edge.nodeA.position.y; positions[2] = edge.nodeA.position.z;
-    positions[3] = edge.nodeB.position.x; positions[4] = edge.nodeB.position.y; positions[5] = edge.nodeB.position.z;
-    edge.line.geometry.attributes.position.needsUpdate = true;
-
-    // Level-based Edge Opacity & Dynamic Pulsing
-    if (globalDist > 100) {
-      edge.line.material.opacity = 0; // Level 1 (Faded)
-    } else if (globalDist > 50) {
-      edge.line.material.opacity = ((100 - globalDist) / 50) * 0.2; // Medium glow
-    } else {
-      edge.line.material.opacity = 0.6 + Math.sin(time * 3 + i) * 0.4; // Synapse Pulse (Level 3/4)
-    }
-
-    // Thicken or narrow line based on thought scale
-    edge.line.material.linewidth = globalDist < 40 ? 2 : 1;
-  });
-
-  composer.render();
+    renderer.render(scene, camera);
 }
 
-function gsapAnimation(target, props, duration, ease) {
-  const start = {}; const change = {}; const startTime = performance.now();
-  for (let key in props) { start[key] = target[key]; change[key] = props[key] - target[key]; }
-
-  function update(currentTime) {
-    const elapsed = (currentTime - startTime) / 1000;
-    const t = Math.min(elapsed / duration, 1);
-    const easeT = ease === "back.out" ? (t < 1 ? 1 - Math.pow(1 - t, 3) : 1) : (t < 1 ? t * (2 - t) : 1);
-    for (let key in props) target[key] = start[key] + change[key] * easeT;
-    if (t < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
+function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
-async function loadRealKnowledge() {
-  console.log('Fetching deeply embedded knowledge from Dexie database...');
-  // Wait a fraction of a second to ensure modules mount
-  await new Promise(r => setTimeout(r, 200));
-
-  if (typeof window.GraphDB !== 'undefined') {
-    try {
-      const data = await window.GraphDB.getAllData();
-      const thoughts = data.nodes;
-      if (!thoughts || thoughts.length === 0) {
-        console.log('Local real database is empty. Seeding neural mesh.');
-        createThoughtNode('deepsleep', 'Neural mesh initialized. DB is currently empty. Open an LLM chat to begin tracking.', 'Core Initialization');
-        setTimeout(() => createThoughtNode('openai', 'Awaiting GPT-4 context stream...', 'Context Scout'), 400);
-        setTimeout(() => createThoughtNode('claude', 'Awaiting Claude semantic bridge...', 'Bridge Scout'), 800);
-        setTimeout(() => createThoughtNode('gemini', 'Awaiting Google Multimodal indexing...', 'Index Scout'), 1200);
-      } else {
-        console.log('Restoring', thoughts.length, 'real structured thoughts from the graph DB!');
-        thoughts.forEach((t, i) => {
-          setTimeout(() => {
-            createThoughtNode(t.aiSource || 'openai', t.name, t.name);
-          }, i * 150);
-        });
-      }
-    } catch (err) {
-      console.error("Dexie DB Error", err);
-    }
-  } else {
-    console.warn('Real DB engine not found in context. Generating fallbacks.');
-    setTimeout(() => createThoughtNode('deepsleep', 'Awaiting DB Module...', 'Status: Offline'), 500);
-  }
-}
-
-
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-else init();
-
-if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === 'NEW_THOUGHT' && isInitialized) {
-      const conceptStr = request.concepts ? request.concepts.map(c => c.name).join(', ') : request.text.substring(0, 20);
-      createThoughtNode(request.ai, request.text, conceptStr);
-      sendResponse({ success: true });
-    }
-  });
-}
-window._handleExtMsg = (request) => {
-  if (request.type === 'NEW_THOUGHT' && isInitialized) {
-    const conceptStr = request.concepts ? request.concepts.map(c => c.name).join(', ') : request.text.substring(0, 20);
-    createThoughtNode(request.ai, request.text, conceptStr);
-  }
-};
+init();
