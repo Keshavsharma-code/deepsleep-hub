@@ -26,7 +26,7 @@ const AI_CONFIG = {
 function init() {
   console.log('Initializing Three.js...');
   document.getElementById('loading').style.display = 'none';
-  
+
   try {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x050508);
@@ -37,7 +37,7 @@ function init() {
 
     const canvasContainer = document.getElementById('canvas-container');
     labelsContainer = document.getElementById('labels-container');
-    
+
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -64,7 +64,7 @@ function init() {
       composer.addPass(bloomPass);
     } catch (e) {
       console.warn("Post-processing failed. Falling back to basic renderer.", e);
-      composer = { render: () => renderer.render(scene, camera), setSize: () => {} };
+      composer = { render: () => renderer.render(scene, camera), setSize: () => { } };
     }
 
     scene.add(new THREE.AmbientLight(0x404040, 4));
@@ -110,58 +110,58 @@ function createBiologicalBrain() {
     { name: 'cerebellum', color: 0xef4444, pos: [0, -8, -10], scale: 1.1, ai: 'kimi' },
     { name: 'core', color: 0xfbbf24, pos: [0, -1, -2], scale: 1.0, ai: 'deepsleep' }
   ];
-  
+
   lobeConfigs.forEach(config => {
     // We use a base radius of 8 to pack them closely
     const geometry = new THREE.SphereGeometry(8, 64, 64);
     const posAttribute = geometry.attributes.position;
     const vertex = new THREE.Vector3();
-    
+
     for (let i = 0; i < posAttribute.count; i++) {
-        vertex.fromBufferAttribute(posAttribute, i);
-        const noise1 = Math.sin(vertex.x * 0.8) * Math.cos(vertex.y * 0.8) * Math.sin(vertex.z * 0.8);
-        const noise2 = Math.sin(vertex.x * 2.0) * Math.cos(vertex.y * 2.0) * 0.3;
-        vertex.multiplyScalar(1 + (noise1 * 0.4) + (noise2 * 0.15));
-        posAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
+      vertex.fromBufferAttribute(posAttribute, i);
+      const noise1 = Math.sin(vertex.x * 0.8) * Math.cos(vertex.y * 0.8) * Math.sin(vertex.z * 0.8);
+      const noise2 = Math.sin(vertex.x * 2.0) * Math.cos(vertex.y * 2.0) * 0.3;
+      vertex.multiplyScalar(1 + (noise1 * 0.4) + (noise2 * 0.15));
+      posAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
     }
     geometry.computeVertexNormals();
-    
+
     const material = new THREE.MeshStandardMaterial({
       color: config.color, emissive: config.color, emissiveIntensity: 0.3, roughness: 0.3, metalness: 0.7, transparent: true, opacity: 0.65
     });
-    
+
     const lobe = new THREE.Mesh(geometry, material);
     lobe.position.set(...config.pos);
     lobe.scale.setScalar(config.scale);
     lobe.userData = { isLobe: true, ai: config.ai, name: config.name, scaleBase: config.scale };
-    
+
     // Macro Label
     if (labelsContainer) {
-       const mLabel = document.createElement('div');
-       mLabel.className = 'macro-label';
-       mLabel.style.position = 'absolute';
-       mLabel.style.color = '#' + config.color.toString(16).padStart(6, '0');
-       mLabel.style.fontSize = '16px';
-       mLabel.style.fontFamily = 'Inter, sans-serif';
-       mLabel.style.fontWeight = '800';
-       mLabel.style.textTransform = 'uppercase';
-       mLabel.style.letterSpacing = '1px';
-       mLabel.style.textShadow = '0 4px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,1)';
-       mLabel.style.pointerEvents = 'none';
-       mLabel.style.whiteSpace = 'nowrap';
-       mLabel.style.transition = 'opacity 0.3s ease';
-       mLabel.innerText = config.ai + ' Cluster';
-       labelsContainer.appendChild(mLabel);
-       lobe.userData.macroLabel = mLabel;
+      const mLabel = document.createElement('div');
+      mLabel.className = 'macro-label';
+      mLabel.style.position = 'absolute';
+      mLabel.style.color = '#' + config.color.toString(16).padStart(6, '0');
+      mLabel.style.fontSize = '16px';
+      mLabel.style.fontFamily = 'Inter, sans-serif';
+      mLabel.style.fontWeight = '800';
+      mLabel.style.textTransform = 'uppercase';
+      mLabel.style.letterSpacing = '1px';
+      mLabel.style.textShadow = '0 4px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,1)';
+      mLabel.style.pointerEvents = 'none';
+      mLabel.style.whiteSpace = 'nowrap';
+      mLabel.style.transition = 'opacity 0.3s ease';
+      mLabel.innerText = config.ai + ' Cluster';
+      labelsContainer.appendChild(mLabel);
+      lobe.userData.macroLabel = mLabel;
     }
 
     brainGroup.add(lobe);
     logicalLobes[config.name] = lobe;
     // Map AI to logical lobe (handle multiple lobes for the same AI, like temporal left/right)
     if (!logicalLobes[config.ai]) {
-        logicalLobes[config.ai] = [lobe];
+      logicalLobes[config.ai] = [lobe];
     } else {
-        logicalLobes[config.ai].push(lobe);
+      logicalLobes[config.ai].push(lobe);
     }
   });
 }
@@ -180,7 +180,7 @@ function createStarfield() {
   const material = new THREE.PointsMaterial({ color: 0x444466, size: 0.7, transparent: true, opacity: 0.5 });
   const stars = new THREE.Points(geometry, material);
   scene.add(stars);
-  
+
   // Slow background drift
   function rotateStars() {
     stars.rotation.y += 0.0001;
@@ -194,20 +194,20 @@ function createThoughtNode(ai, text, concept) {
   if (!isInitialized) return;
 
   const config = AI_CONFIG[ai] || AI_CONFIG.openai;
-  
+
   // Get corresponding lobe instances for this AI
   const lobeSubArr = logicalLobes[ai] || logicalLobes['openai'];
   // If multiple lobes match (like temporal left/right), pick one randomly
   const baseLobe = lobeSubArr[Math.floor(Math.random() * lobeSubArr.length)];
   const basePos = baseLobe.position;
-  
+
   // 2. SPAWN EXACTLY INSIDE THE LOBE BOUNDARY
   // The lobe radius is 8 * scale. We want nodes strictly contained inside.
   const lobeRadius = 8 * baseLobe.scale.x;
   const radiusOffset = Math.random() * (lobeRadius - 1.5); // Stay slightly inside the surface
   const theta = Math.random() * Math.PI * 2;
   const phi = Math.acos((Math.random() * 2) - 1);
-  
+
   const position = new THREE.Vector3(
     basePos.x + radiusOffset * Math.sin(phi) * Math.cos(theta),
     basePos.y + radiusOffset * Math.sin(phi) * Math.sin(theta),
@@ -216,7 +216,7 @@ function createThoughtNode(ai, text, concept) {
 
   let geometry = config.special === 'dream' ? new THREE.IcosahedronGeometry(0.8, 0) : new THREE.SphereGeometry(0.5, 32, 32);
   const material = new THREE.MeshStandardMaterial({ color: config.color, emissive: config.color, emissiveIntensity: 2.0, transparent: true, opacity: 1.0, roughness: 0.2, metalness: 0.8 });
-  
+
   const node = new THREE.Mesh(geometry, material);
   node.position.copy(position);
   node.userData = { type: 'thought', ai: ai, text: text, concept: concept };
@@ -224,36 +224,36 @@ function createThoughtNode(ai, text, concept) {
   // FLASH THE LOBE IT SURFACED IN (Visual reflection)
   gsapAnimation(baseLobe.material, { emissiveIntensity: 0.8 }, 0.2, "power2.out");
   setTimeout(() => {
-     gsapAnimation(baseLobe.material, { emissiveIntensity: 0.1 }, 1.0, "power2.out");
+    gsapAnimation(baseLobe.material, { emissiveIntensity: 0.1 }, 1.0, "power2.out");
   }, 300);
 
   // 3. CREATE CSS2D HTML LABEL
   if (labelsContainer) {
-      const label = document.createElement('div');
-      label.className = 'node-label';
-      label.style.position = 'absolute';
-      label.style.color = '#' + config.color.toString(16).padStart(6, '0');
-      label.style.fontSize = '12px';
-      label.style.fontFamily = 'Inter, sans-serif';
-      label.style.fontWeight = '700';
-      label.style.textShadow = '0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,1), 0 0 1px rgba(255,255,255,0.5)';
-      label.style.pointerEvents = 'none';
-      label.style.whiteSpace = 'nowrap';
-      label.innerText = concept || ai;
-      label.style.transition = 'opacity 0.2s';
-      labelsContainer.appendChild(label);
-      node.userData.label = label;
+    const label = document.createElement('div');
+    label.className = 'node-label';
+    label.style.position = 'absolute';
+    label.style.color = '#' + config.color.toString(16).padStart(6, '0');
+    label.style.fontSize = '12px';
+    label.style.fontFamily = 'Inter, sans-serif';
+    label.style.fontWeight = '700';
+    label.style.textShadow = '0 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,1), 0 0 1px rgba(255,255,255,0.5)';
+    label.style.pointerEvents = 'none';
+    label.style.whiteSpace = 'nowrap';
+    label.innerText = concept || ai;
+    label.style.transition = 'opacity 0.2s';
+    labelsContainer.appendChild(label);
+    node.userData.label = label;
   }
 
   // 4. CONNECT NEURONAL EDGES (Keep them neatly connected, staying in brain mostly)
   const targetNode = thoughtNodes.length > 5 && Math.random() > 0.4 ? thoughtNodes[Math.floor(Math.random() * thoughtNodes.length)] : baseLobe;
   createEdge(node, targetNode, config.color);
-      
+
   createInkSplat(position, config.color);
 
   brainGroup.add(node);
   thoughtNodes.push(node);
-  
+
   nodeInjectMem[ai] = concept || text.substring(0, 30);
 
   node.scale.set(0.01, 0.01, 0.01);
@@ -333,11 +333,11 @@ function removeOldestNode() {
     if (old.userData.label) old.userData.label.remove();
     createInkSplat(old.position, 0xff0000);
     brainGroup.remove(old);
-    
+
     for (let i = edges.length - 1; i >= 0; i--) {
       if (edges[i].nodeA === old || edges[i].nodeB === old) {
-         brainGroup.remove(edges[i].line);
-         edges.splice(i, 1);
+        brainGroup.remove(edges[i].line);
+        edges.splice(i, 1);
       }
     }
     old.geometry.dispose(); old.material.dispose();
@@ -349,9 +349,9 @@ function onMouseMove(event) {
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(thoughtNodes);
-  
+
   thoughtNodes.forEach(node => { node.material.emissiveIntensity = 1.0; });
-  
+
   if (intersects.length > 0) {
     document.body.style.cursor = 'pointer';
     intersects[0].object.material.emissiveIntensity = 3.0;
@@ -364,19 +364,19 @@ function onMouseClick(event) {
   if (!isInitialized) return;
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(thoughtNodes);
-  
+
   if (intersects.length > 0) {
     const node = intersects[0].object;
     const data = node.userData;
-    
+
     // Project node position to screen for coordinates
     tempV.copy(node.position);
     node.localToWorld(tempV);
     tempV.project(camera);
-    
+
     const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
     const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
-    
+
     // Use the trace overlay for left clicks too for consistency and reliability
     const overlay = document.getElementById('trace-overlay');
     document.getElementById('trace-ai-type').innerText = data.ai.toUpperCase();
@@ -384,97 +384,77 @@ function onMouseClick(event) {
     document.getElementById('trace-content').innerText = data.text || "No context data available.";
     document.getElementById('trace-node-id').innerText = node.id;
     document.getElementById('trace-lobe').innerText = (data.concept || "UNKNOWN").toUpperCase();
-    
+
     overlay.classList.add('active');
   } else {
     // Reset view
     gsapAnimation(camera.position, { x: 0, y: 30, z: 80 }, 1.5, "power2.out");
     gsapAnimation(controls.target, { x: 0, y: 0, z: 0 }, 1.5, "power2.out");
-    
+
     const overlay = document.getElementById('trace-overlay');
     overlay.classList.remove('active');
-    
+
     const lobeIntersects = raycaster.intersectObjects(Object.values(logicalLobes).flat());
     if (lobeIntersects.length > 0) {
-        const lobe = lobeIntersects[0].object;
-        createThoughtNode(lobe.userData.ai, "Manual Node Injection: Exploratory Thought Process", "Manual Pulse");
+      const lobe = lobeIntersects[0].object;
+      createThoughtNode(lobe.userData.ai, "Manual Node Injection: Exploratory Thought Process", "Manual Pulse");
     }
   }
 }
 
 window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') {
-        const keys = Object.keys(AI_CONFIG);
-        const rAi = keys[Math.floor(Math.random() * keys.length)];
-        createThoughtNode(rAi, "Universal Spontaneous Neural Injection Fired", "Spontaneous Injection");
-    }
-    if (e.key === 'z' || e.key === 'Z') {
-        toggleZenMode();
-    }
+  if (e.code === 'Space') {
+    const keys = Object.keys(AI_CONFIG);
+    const rAi = keys[Math.floor(Math.random() * keys.length)];
+    createThoughtNode(rAi, "Universal Spontaneous Neural Injection Fired", "Spontaneous Injection");
+  }
+  if (e.key === 'z' || e.key === 'Z') {
+    toggleZenMode();
+  }
 });
 
 function toggleZenMode() {
-    const panels = document.querySelectorAll('.panel, #toggle-ui');
-    const isHidden = panels[0].style.opacity === '0';
-    panels.forEach(p => {
-        p.style.opacity = isHidden ? '1' : '0';
-        p.style.pointerEvents = isHidden ? 'auto' : 'none';
-    });
+  const panels = document.querySelectorAll('.panel, #toggle-ui');
+  const isHidden = panels[0].style.opacity === '0';
+  panels.forEach(p => {
+    p.style.opacity = isHidden ? '1' : '0';
+    p.style.pointerEvents = isHidden ? 'auto' : 'none';
+  });
 }
 
 function onRightClick(event) {
   event.preventDefault();
   if (!isInitialized) return;
-  
+
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(thoughtNodes);
-  
+
   const overlay = document.getElementById('trace-overlay');
   if (intersects.length > 0) {
-      const node = intersects[0].object;
-      const data = node.userData;
-      
-      document.getElementById('trace-ai-type').innerText = data.ai.toUpperCase();
-      document.getElementById('trace-ai-type').style.color = '#' + AI_CONFIG[data.ai]?.color.toString(16).padStart(6, '0');
-      document.getElementById('trace-content').innerText = data.text || "No context data available for this node.";
-      document.getElementById('trace-node-id').innerText = node.id;
-      document.getElementById('trace-lobe').innerText = (data.concept || "UNKNOWN").toUpperCase();
-      
-      overlay.classList.add('active');
+    const node = intersects[0].object;
+    const data = node.userData;
+
+    document.getElementById('trace-ai-type').innerText = data.ai.toUpperCase();
+    document.getElementById('trace-ai-type').style.color = '#' + AI_CONFIG[data.ai]?.color.toString(16).padStart(6, '0');
+    document.getElementById('trace-content').innerText = data.text || "No context data available for this node.";
+    document.getElementById('trace-node-id').innerText = node.id;
+    document.getElementById('trace-lobe').innerText = (data.concept || "UNKNOWN").toUpperCase();
+
+    overlay.classList.add('active');
   } else {
-      overlay.classList.remove('active');
+    overlay.classList.remove('active');
   }
 }
 
 // Close overlay on left click elsewhere
 window.addEventListener('mousedown', (e) => {
-    const overlay = document.getElementById('trace-overlay');
-    if (e.button === 0 && !overlay.contains(e.target)) {
-        overlay.classList.remove('active');
-    }
+  const overlay = document.getElementById('trace-overlay');
+  if (e.button === 0 && !overlay.contains(e.target)) {
+    overlay.classList.remove('active');
+  }
 });
 
 window.addEventListener('contextmenu', onRightClick);
-
-// Context Bridge: Copy Memory to Clipboard
-document.getElementById('copy-context').addEventListener('click', () => {
-    const content = document.getElementById('trace-content').innerText;
-    const ai = document.getElementById('trace-ai-type').innerText;
-    const concept = document.getElementById('trace-lobe').innerText;
-    
-    const formattedText = `[DeepSleep Memory Bridge | Source: ${ai}]\nConcept: ${concept}\nContext: ${content}`;
-    
-    navigator.clipboard.writeText(formattedText).then(() => {
-        const btn = document.getElementById('copy-context');
-        const originalText = btn.innerText;
-        btn.innerText = 'COPIED TO MEMORY! ✨';
-        btn.style.background = '#10b981';
-        setTimeout(() => {
-            btn.innerText = originalText;
-            btn.style.background = '#3b82f6';
-        }, 2000);
-    });
-});
 
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -488,7 +468,7 @@ const tempV = new THREE.Vector3();
 function animate() {
   requestAnimationFrame(animate);
   if (!isInitialized) return;
-  
+
   controls.update();
 
   const time = Date.now() * 0.001;
@@ -499,109 +479,109 @@ function animate() {
     // Breathing scale: 1.0 to 1.05
     const breathe = 1 + Math.sin(time * 0.5 + idx) * 0.03;
     lobe.scale.setScalar(breathe * (lobe.userData.scaleBase || 1.0));
-    
+
     // Glowing pulse: 0.1 to 0.4
     if (lobe.material.emissive) {
-       lobe.material.emissiveIntensity = 0.2 + Math.sin(time + idx) * 0.15;
+      lobe.material.emissiveIntensity = 0.2 + Math.sin(time + idx) * 0.15;
     }
   });
 
   thoughtNodes.forEach((node, i) => {
     node.position.y += Math.sin(time * 2 + i) * 0.02;
-    
+
     // 5. PROJECT 3D VECTOR TO 2D SCREEN FOR TEXT LABELS
     if (node.userData.label) {
-        tempV.copy(node.position);
-        node.localToWorld(tempV);
-        tempV.project(camera);
-        
-        if (tempV.z > 1) {
-            node.userData.label.style.display = 'none';
+      tempV.copy(node.position);
+      node.localToWorld(tempV);
+      tempV.project(camera);
+
+      if (tempV.z > 1) {
+        node.userData.label.style.display = 'none';
+      } else {
+        node.userData.label.style.display = 'block';
+        const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+        const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
+        node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 20}px)`;
+
+        // Multi-level zoom mappings
+        // Level 1: > 100 (Far) - Only macro lobes visible
+        // Level 2: 60 to 100 (Medium) - Macro lobes fade out, medium labels appear
+        // Level 3: 30 to 60 (Close) - Tiny nodes fully bright and sharp
+        // Level 4: < 30 (Super Close) - Maximum interactivity
+
+        if (globalDist > 90) {
+          node.userData.label.style.opacity = 0; // Level 1: Labels hidden
+          node.material.opacity = 0.2; // Nodes fade
+        } else if (globalDist > 50) {
+          // Level 2: Nodes fading in, labels visible but soft
+          node.userData.label.style.opacity = ((90 - globalDist) / 40) * 0.6;
+          node.material.opacity = 0.5;
+          node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 12}px) scale(0.8)`;
         } else {
-            node.userData.label.style.display = 'block';
-            const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
-            const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
-            node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 20}px)`;
-            
-            // Multi-level zoom mappings
-            // Level 1: > 100 (Far) - Only macro lobes visible
-            // Level 2: 60 to 100 (Medium) - Macro lobes fade out, medium labels appear
-            // Level 3: 30 to 60 (Close) - Tiny nodes fully bright and sharp
-            // Level 4: < 30 (Super Close) - Maximum interactivity
-            
-            if (globalDist > 90) {
-               node.userData.label.style.opacity = 0; // Level 1: Labels hidden
-               node.material.opacity = 0.2; // Nodes fade
-            } else if (globalDist > 50) {
-               // Level 2: Nodes fading in, labels visible but soft
-               node.userData.label.style.opacity = ((90 - globalDist) / 40) * 0.6;
-               node.material.opacity = 0.5;
-               node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 12}px) scale(0.8)`;
-            } else {
-               // Level 3 & 4: Deep focus
-               node.userData.label.style.opacity = 1;
-               node.material.opacity = 1.0;
-               node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 20}px) scale(1.1)`;
-               
-               if (globalDist < 30) {
-                  node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 25}px) scale(1.3)`;
-                  node.userData.label.style.zIndex = 100;
-               }
-            }
+          // Level 3 & 4: Deep focus
+          node.userData.label.style.opacity = 1;
+          node.material.opacity = 1.0;
+          node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 20}px) scale(1.1)`;
+
+          if (globalDist < 30) {
+            node.userData.label.style.transform = `translate(-50%, -50%) translate(${x}px,${y - 25}px) scale(1.3)`;
+            node.userData.label.style.zIndex = 100;
+          }
         }
+      }
     }
   });
 
   // Calculate Macro Label screen positions & Multi-level Zoom Opacity
   Object.values(logicalLobes).flat().forEach(lobe => {
-      if (lobe.userData.macroLabel) {
-          tempV.copy(lobe.position);
-          lobe.localToWorld(tempV);
-          tempV.project(camera);
-          
-          if (tempV.z > 1) {
-              lobe.userData.macroLabel.style.display = 'none';
-          } else {
-              lobe.userData.macroLabel.style.display = 'block';
-              const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
-              const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
-              lobe.userData.macroLabel.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
-              
-              // Only visible at Level 1 & 2
-              if (globalDist > 100) {
-                  lobe.userData.macroLabel.style.opacity = 0.8;
-              } else if (globalDist > 60) {
-                  lobe.userData.macroLabel.style.opacity = ((globalDist - 60) / 40);
-              } else {
-                  lobe.userData.macroLabel.style.opacity = 0; // Hidden closely
-              }
-              
-              // Latest concept logic
-              if (nodeInjectMem && nodeInjectMem[lobe.userData.ai]) {
-                  lobe.userData.macroLabel.innerText = nodeInjectMem[lobe.userData.ai];
-              }
-          }
+    if (lobe.userData.macroLabel) {
+      tempV.copy(lobe.position);
+      lobe.localToWorld(tempV);
+      tempV.project(camera);
+
+      if (tempV.z > 1) {
+        lobe.userData.macroLabel.style.display = 'none';
+      } else {
+        lobe.userData.macroLabel.style.display = 'block';
+        const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+        const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
+        lobe.userData.macroLabel.style.transform = `translate(-50%, -50%) translate(${x}px,${y}px)`;
+
+        // Only visible at Level 1 & 2
+        if (globalDist > 100) {
+          lobe.userData.macroLabel.style.opacity = 0.8;
+        } else if (globalDist > 60) {
+          lobe.userData.macroLabel.style.opacity = ((globalDist - 60) / 40);
+        } else {
+          lobe.userData.macroLabel.style.opacity = 0; // Hidden closely
+        }
+
+        // Latest concept logic
+        if (nodeInjectMem && nodeInjectMem[lobe.userData.ai]) {
+          lobe.userData.macroLabel.innerText = nodeInjectMem[lobe.userData.ai];
+        }
       }
+    }
   });
-  
+
   // Animate dynamic synapse trails
   edges.forEach((edge, i) => {
-     const positions = edge.line.geometry.attributes.position.array;
-     positions[0] = edge.nodeA.position.x; positions[1] = edge.nodeA.position.y; positions[2] = edge.nodeA.position.z;
-     positions[3] = edge.nodeB.position.x; positions[4] = edge.nodeB.position.y; positions[5] = edge.nodeB.position.z;
-     edge.line.geometry.attributes.position.needsUpdate = true;
+    const positions = edge.line.geometry.attributes.position.array;
+    positions[0] = edge.nodeA.position.x; positions[1] = edge.nodeA.position.y; positions[2] = edge.nodeA.position.z;
+    positions[3] = edge.nodeB.position.x; positions[4] = edge.nodeB.position.y; positions[5] = edge.nodeB.position.z;
+    edge.line.geometry.attributes.position.needsUpdate = true;
 
-     // Level-based Edge Opacity & Dynamic Pulsing
-     if (globalDist > 100) {
-         edge.line.material.opacity = 0; // Level 1 (Faded)
-     } else if (globalDist > 50) {
-         edge.line.material.opacity = ((100 - globalDist) / 50) * 0.2; // Medium glow
-     } else {
-         edge.line.material.opacity = 0.6 + Math.sin(time * 3 + i) * 0.4; // Synapse Pulse (Level 3/4)
-     }
-     
-     // Thicken or narrow line based on thought scale
-     edge.line.material.linewidth = globalDist < 40 ? 2 : 1; 
+    // Level-based Edge Opacity & Dynamic Pulsing
+    if (globalDist > 100) {
+      edge.line.material.opacity = 0; // Level 1 (Faded)
+    } else if (globalDist > 50) {
+      edge.line.material.opacity = ((100 - globalDist) / 50) * 0.2; // Medium glow
+    } else {
+      edge.line.material.opacity = 0.6 + Math.sin(time * 3 + i) * 0.4; // Synapse Pulse (Level 3/4)
+    }
+
+    // Thicken or narrow line based on thought scale
+    edge.line.material.linewidth = globalDist < 40 ? 2 : 1;
   });
 
   composer.render();
@@ -610,7 +590,7 @@ function animate() {
 function gsapAnimation(target, props, duration, ease) {
   const start = {}; const change = {}; const startTime = performance.now();
   for (let key in props) { start[key] = target[key]; change[key] = props[key] - target[key]; }
-  
+
   function update(currentTime) {
     const elapsed = (currentTime - startTime) / 1000;
     const t = Math.min(elapsed / duration, 1);
@@ -624,32 +604,32 @@ function gsapAnimation(target, props, duration, ease) {
 async function loadRealKnowledge() {
   console.log('Fetching deeply embedded knowledge from Dexie database...');
   // Wait a fraction of a second to ensure modules mount
-  await new Promise(r => setTimeout(r, 200)); 
-  
+  await new Promise(r => setTimeout(r, 200));
+
   if (typeof window.GraphDB !== 'undefined') {
-      try {
-          const data = await window.GraphDB.getAllData();
-          const thoughts = data.nodes;
-          if (!thoughts || thoughts.length === 0) {
-              console.log('Local real database is empty. Seeding neural mesh.');
-              createThoughtNode('deepsleep', 'Neural mesh initialized. DB is currently empty. Open an LLM chat to begin tracking.', 'Core Initialization');
-              setTimeout(() => createThoughtNode('openai', 'Awaiting GPT-4 context stream...', 'Context Scout'), 400);
-              setTimeout(() => createThoughtNode('claude', 'Awaiting Claude semantic bridge...', 'Bridge Scout'), 800);
-              setTimeout(() => createThoughtNode('gemini', 'Awaiting Google Multimodal indexing...', 'Index Scout'), 1200);
-          } else {
-              console.log('Restoring', thoughts.length, 'real structured thoughts from the graph DB!');
-              thoughts.forEach((t, i) => {
-                  setTimeout(() => {
-                      createThoughtNode(t.aiSource || 'openai', t.name, t.name);
-                  }, i * 150);
-              });
-          }
-      } catch(err) {
-          console.error("Dexie DB Error", err);
+    try {
+      const data = await window.GraphDB.getAllData();
+      const thoughts = data.nodes;
+      if (!thoughts || thoughts.length === 0) {
+        console.log('Local real database is empty. Seeding neural mesh.');
+        createThoughtNode('deepsleep', 'Neural mesh initialized. DB is currently empty. Open an LLM chat to begin tracking.', 'Core Initialization');
+        setTimeout(() => createThoughtNode('openai', 'Awaiting GPT-4 context stream...', 'Context Scout'), 400);
+        setTimeout(() => createThoughtNode('claude', 'Awaiting Claude semantic bridge...', 'Bridge Scout'), 800);
+        setTimeout(() => createThoughtNode('gemini', 'Awaiting Google Multimodal indexing...', 'Index Scout'), 1200);
+      } else {
+        console.log('Restoring', thoughts.length, 'real structured thoughts from the graph DB!');
+        thoughts.forEach((t, i) => {
+          setTimeout(() => {
+            createThoughtNode(t.aiSource || 'openai', t.name, t.name);
+          }, i * 150);
+        });
       }
+    } catch (err) {
+      console.error("Dexie DB Error", err);
+    }
   } else {
-      console.warn('Real DB engine not found in context. Generating fallbacks.');
-      setTimeout(() => createThoughtNode('deepsleep', 'Awaiting DB Module...', 'Status: Offline'), 500);
+    console.warn('Real DB engine not found in context. Generating fallbacks.');
+    setTimeout(() => createThoughtNode('deepsleep', 'Awaiting DB Module...', 'Status: Offline'), 500);
   }
 }
 

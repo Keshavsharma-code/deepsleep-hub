@@ -1,4 +1,4 @@
-export const KnowledgeExtractor = {
+self.KnowledgeExtractor = {
   extractPatterns: (text) => {
     const concepts = [];
     const relationships = [];

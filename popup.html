@@ -1,53 +1,67 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <style>
-    body { 
-      width: 400px; 
-      height: 500px; 
+    body {
+      width: 400px;
+      height: 500px;
       background: #050508;
       color: white;
       font-family: 'SF Mono', monospace;
       margin: 0;
       padding: 20px;
     }
-    h2 { font-weight: normal; letter-spacing: 2px; margin-bottom: 20px; }
-    .status { 
-      padding: 10px; 
-      background: rgba(255,255,255,0.1); 
+
+    h2 {
+      font-weight: normal;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .status {
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.1);
       border-radius: 6px;
       margin-bottom: 10px;
       font-size: 12px;
     }
+
     .ai-status {
       display: flex;
       align-items: center;
       margin: 8px 0;
     }
+
     .dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       margin-right: 10px;
     }
+
     button {
       width: 100%;
       padding: 12px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: white;
       border-radius: 6px;
       cursor: pointer;
       margin-top: 10px;
       font-family: inherit;
     }
-    button:hover { background: rgba(255,255,255,0.2); }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
   </style>
 </head>
+
 <body>
   <h2>DEEPSLEEP-HUB V2</h2>
   <div class="status">Status: <span id="status">Active Semantic Graph</span></div>
-  
+
   <div class="ai-status">
     <div class="dot" style="background: #ffffff;"></div>
     <span>OpenAI (GPT-4)</span>
@@ -68,16 +82,11 @@
     <div class="dot" style="background: #fbbf24; box-shadow: 0 0 5px #fbbf24;"></div>
     <span>DeepSleep-beta (Dream Nodes)</span>
   </div>
-  
-  <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 20px 0;">
-  <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 12px;">Recent Memories</div>
-  <div id="recent-memories" style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-     <div style="font-size: 10px; color: #64748b;">Awaiting neural capture...</div>
-  </div>
-  
-  <button id="open-brain" style="margin-top: 20px;">Enter Semantic Visualization</button>
+
+  <button id="open-brain">Enter Semantic Visualization</button>
   <button id="clear-memory">Purge Vector Database</button>
-  
+
   <script src="popup.js"></script>
 </body>
+
 </html>

@@ -1,4 +1,4 @@
-const Dexie = globalThis.Dexie || (typeof self !== 'undefined' ? self.Dexie : null);
+const Dexie = self.Dexie;
 
 // db.js - Production-grade database layer
 class DeepSleepDB extends Dexie {
@@ -50,7 +50,7 @@ class DeepSleepDB extends Dexie {
 
 // Singleton with connection pooling
 let dbInstance = null;
-export const getDB = () => {
+const getDB = () => {
   if (!dbInstance) dbInstance = new DeepSleepDB();
   return dbInstance;
 };
@@ -76,7 +76,8 @@ function cosineSimilarity(a, b) {
   return dot / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
-export const GraphDB = {
+// Exported to self for importScripts
+self.GraphDB = {
   addConcept: async (name, aiSource, vector) => {
     const db = getDB();
     const color = AI_COLORS[aiSource] || '#ffffff';

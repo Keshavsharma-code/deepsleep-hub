@@ -1,5 +1,8 @@
-import { GraphDB } from './db.js';
-import { KnowledgeExtractor } from './extractor.js';
+importScripts('lib/dexie.min.js', 'db.js', 'extractor.js');
+
+// Access shared globals from importScripts
+const { GraphDB } = self;
+const { KnowledgeExtractor } = self;
 
 // Keep-alive heartbeat (MV3 Service Worker persistence)
 chrome.alarms.create('deepsleep_pulse', { periodInMinutes: 4.5 });
