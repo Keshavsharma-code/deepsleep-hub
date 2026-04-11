@@ -1,76 +1,100 @@
-/* background.js - DeepSleep Hub v3.0 Gold Bridge */
+importScripts('lib/dexie.min.js', 'db.js', 'extractor.js');
 
-const MEMORY_LIMIT = 100;
+// Access shared globals from importScripts
+const { GraphDB } = self;
+const { KnowledgeExtractor } = self;
 
-// Listen for CAPTURE messages from content scripts
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    try {
-        if (request.type === 'CAPTURE') {
-            saveMemory(request.text, request.source);
-            sendResponse({ success: true });
-        }
-        
-        if (request.type === 'GET_MEMORIES') {
-            chrome.storage.local.get(['memories'], (result) => {
-                sendResponse({ success: true, memories: result.memories || [] });
-            });
-            return true; // Keep channel open for async response
-        }
+// Keep-alive heartbeat (MV3 Service Worker persistence)
+chrome.alarms.create('deepsleep_pulse', { periodInMinutes: 4.5 });
 
-        if (request.type === 'CLEAR_MEMORIES') {
-            chrome.storage.local.set({ memories: [] }, () => {
-                sendResponse({ success: true });
-            });
-            return true;
-        }
-    } catch (e) {
-        console.error('[DeepSleep Background] Error:', e);
-        sendResponse({ success: false, error: e.message });
-    }
-    return true; 
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === 'deepsleep_pulse') {
+    console.log('🧠 DeepSleep Pulse: Service Worker is active.');
+  }
 });
 
-async function saveMemory(text, source) {
-    chrome.storage.local.get(['memories'], (result) => {
-        let memories = result.memories || [];
-        
-        // Add new memory to the front
-        const newMemory = {
-            id: `m_${Date.now()}`,
-            text: text,
-            source: source,
-            timestamp: Date.now()
-        };
+chrome.runtime?.onMessage?.addListener((request, sender, sendResponse) => {
+  if (request.type === 'CAPTURE_THOUGHT') {
+    processThoughtAsync(request.ai, request.content, request.fullLog)
+      .then(() => sendResponse({success: true}))
+      .catch(err => {
+          console.error('[Background] Capture failed:', err);
+          sendResponse({success: false, error: err.message});
+      });
+    return true; 
+  }
+  
+  if (request.type === 'GET_RECENT_THOUGHTS') {
+    GraphDB.getAllData()
+      .then(data => {
+          // Sort by timestamp and take top 5
+          const sorted = data.nodes.sort((a,b) => b.timestamp - a.timestamp).slice(0, 5);
+          sendResponse({ success: true, thoughts: sorted });
+      })
+      .catch(err => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
+});
 
-        // De-duplicate: If same source has same text, dont add
-        const isDuplicate = memories.some(m => m.source === source && m.text === text);
-        if (isDuplicate) return;
-
-        memories.unshift(newMemory);
-
-        // LRU Eviction: maintain 100 items
-        if (memories.length > MEMORY_LIMIT) {
-            memories = memories.slice(0, MEMORY_LIMIT);
+async function processThoughtAsync(ai, content, fullLog) {
+  // Extract Concepts and Relationships
+  const { concepts, relationships } = KnowledgeExtractor.extractPatterns(content);
+  
+  if (concepts.length > 0) {
+      const dbConceptIds = {};
+      
+      // Store concepts
+      for (const c of concepts) {
+        if (!dbConceptIds[c.name]) {
+          // Compute real semantic embedding vector [^24^] (Aligned with README)
+          const vector = await KnowledgeExtractor.embed(c.name); 
+          dbConceptIds[c.name] = await GraphDB.addConcept(c.name, ai, vector);
+          c.dbId = dbConceptIds[c.name];
+        } else {
+          c.dbId = dbConceptIds[c.name];
         }
+      }
+    
+      // Store edges
+      for (const r of relationships) {
+         const sourceConcept = concepts.find(c => c.id === r.source);
+         const targetConcept = concepts.find(c => c.id === r.target);
+         
+         if (sourceConcept && targetConcept && sourceConcept.dbId && targetConcept.dbId) {
+             r.dbId = await GraphDB.addRelationship(sourceConcept.dbId, targetConcept.dbId, r.type, content);
+             r.sourceDbId = sourceConcept.dbId;
+             r.targetDbId = targetConcept.dbId;
+         }
+      }
+    
+      await GraphDB.calculateImportance();
+  }
 
-        chrome.storage.local.set({ memories });
-        console.log(`[DeepSleep] Memory Captured from ${source}: ${text.substring(0, 30)}...`);
-        
-        // Notify open brain tabs
-        notifyBrainUI(newMemory);
+  // Notify any open brain UI
+  chrome.tabs.query({url: chrome.runtime.getURL('brain.html') + '*'}, (tabs) => {
+    tabs.forEach(tab => {
+      chrome.tabs.sendMessage(tab.id, {
+        type: 'NEW_THOUGHT',
+        ai: ai,
+        text: content,
+        concepts: concepts,
+        relationships: relationships
+      }).catch(() => {});
     });
+  });
 }
 
-function notifyBrainUI(memory) {
-    chrome.tabs.query({}, (tabs) => {
+// Reconnection logic for content scripts after update
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.tabs.query({ url: ['*://chat.openai.com/*', '*://claude.ai/*', '*://gemini.google.com/*'] }, (tabs) => {
         tabs.forEach(tab => {
-            if (tab.url && tab.url.includes('brain.html')) {
-                chrome.tabs.sendMessage(tab.id, { type: 'NEW_MEMORY', memory }).catch(() => {});
-            }
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: () => {
+                    console.log('[DeepSleep] Extension updated. Reconnecting observers...');
+                    window.location.reload();
+                }
+            }).catch(e => console.warn('[Background] Auto-reload failed for tab:', tab.id, e));
         });
     });
-}
-
-// Keep-alive for Service Worker
-chrome.alarms.create('ds_heartbeat', { periodInMinutes: 1 });
-chrome.alarms.onAlarm.addListener(() => console.log('🧠 DeepSleep Hub: Active Heartbeat'));
+});

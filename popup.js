@@ -1,43 +1,27 @@
-/* popup.js - DeepSleep Hub v3.0 */
+document.getElementById('open-brain').addEventListener('click', () => {
+  chrome.tabs.create({ url: chrome.runtime.getURL('brain.html') });
+});
 
-function loadMemories() {
-    chrome.runtime.sendMessage({ type: 'GET_MEMORIES' }, (response) => {
-        const list = document.getElementById('memory-list');
-        if (response && response.memories && response.memories.length > 0) {
-            list.innerHTML = '';
-            response.memories.slice(0, 10).forEach(m => {
-                const item = document.createElement('div');
-                item.className = 'memory-item';
-                const color = m.source === 'chatgpt' ? '#10a37f' : 
-                             m.source === 'claude' ? '#d97757' : '#4285f4';
-                
-                item.style.borderLeft = `3px solid ${color}`;
-                item.innerHTML = `
-                    <div class="source-tag" style="color:${color}">${m.source.toUpperCase()}</div>
-                    <div class="preview">${m.text.substring(0, 80)}...</div>
-                `;
-                
-                item.onclick = () => {
-                   navigator.clipboard.writeText(m.text);
-                   const original = item.innerHTML;
-                   item.innerHTML = '<div style="color:#10b981; font-weight:bold;">COPIED TO CLIPBOARD!</div>';
-                   setTimeout(() => item.innerHTML = original, 1000);
-                };
-                
-                list.appendChild(item);
-            });
-        }
-    });
+document.getElementById('clear-memory').addEventListener('click', () => {
+  const req = indexedDB.deleteDatabase('DeepSleepGraph');
+  req.onsuccess = () => {
+    document.getElementById('status').textContent = 'Graph Purged';
+    setTimeout(() => {
+      document.getElementById('status').textContent = 'Active Semantic Graph';
+    }, 2000);
+  };
+});
+
+// Load recent memories for the "Bridge"
+async function loadRecentMemories() {
+    const list = document.getElementById('recent-memories');
+    try {
+        const db = window.GraphDB; // Accessed via db.js script tag
+        if (!db) return;
+        
+        const data = await db.getAllData();
+        const nodes = data.nodes.sort((a,b) => b.timestamp - a.timestamp).slice(0, 5);
+    } catch (e) {
+        console.error(e);
+    }
 }
-
-document.getElementById('open-brain').onclick = () => {
-    chrome.tabs.create({ url: 'brain.html' });
-};
-
-document.getElementById('clear-memories').onclick = () => {
-    chrome.runtime.sendMessage({ type: 'CLEAR_MEMORIES' }, () => {
-        window.location.reload();
-    });
-};
-
-document.addEventListener('DOMContentLoaded', loadMemories);

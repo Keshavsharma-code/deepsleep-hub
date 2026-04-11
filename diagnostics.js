@@ -71,5 +71,5 @@ class DeepSleepDiagnostics {
   }
 }
 
-export const diagnostics = new DeepSleepDiagnostics();
+const diagnostics = new DeepSleepDiagnostics();
 window.DeepSleepDiagnostics = diagnostics;

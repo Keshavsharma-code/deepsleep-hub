@@ -55,7 +55,7 @@ const getDB = () => {
   return dbInstance;
 };
 
-export const AI_COLORS = {
+const AI_COLORS = {
   openai: '#ffffff',
   codex: '#3b82f6',
   claude: '#f97316',

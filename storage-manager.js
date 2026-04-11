@@ -4,12 +4,13 @@ import { getDB } from './db.js';
 const STORAGE_THRESHOLD = 0.85; // 85% of quota
 const MAX_NODES = 5000;
 
-export class StorageManager {
+class StorageManager {
   static async checkQuota() {
     if (!navigator.storage || !navigator.storage.estimate) return true;
     
     try {
       const { usage, quota } = await navigator.storage.estimate();
+      const diagnostics = new DeepSleepDiagnostics();
       const ratio = usage / quota;
       
       console.log(`[Storage] Usage: ${(ratio * 100).toFixed(2)}% (${usage} / ${quota})`);
