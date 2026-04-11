@@ -20,7 +20,13 @@
         const trigger = document.createElement('div');
         trigger.id = 'deepsleep-injector-trigger';
         trigger.className = 'deepsleep-injector-trigger';
-        trigger.innerHTML = '<span class="deepsleep-injector-icon">🧠</span>';
+        trigger.innerHTML = `
+            <span class="deepsleep-injector-icon">🧠</span>
+            <span id="ds-widget-hide" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0; transition: opacity 0.2s;">×</span>
+        `;
+        
+        trigger.onmouseover = () => { document.getElementById('ds-widget-hide').style.opacity = '1'; };
+        trigger.onmouseleave = () => { document.getElementById('ds-widget-hide').style.opacity = '0'; };
         
         const overlay = document.createElement('div');
         overlay.className = 'deepsleep-overlay';
@@ -39,6 +45,11 @@
 
         trigger.onclick = (e) => {
             e.stopPropagation();
+            if (e.target.id === 'ds-widget-hide') {
+                trigger.style.display = 'none';
+                chrome.storage.local.set({ 'ds_widget_hidden': true });
+                return;
+            }
             // Visual Proof of Life (Pulse)
             trigger.style.boxShadow = '0 0 40px #3b82f6';
             trigger.style.transform = 'scale(1.3)';
@@ -173,5 +184,9 @@
         }
     }
 
-    setTimeout(createUI, 3000);
+    chrome.storage.local.get(['ds_widget_hidden'], (result) => {
+        if (!result.ds_widget_hidden) {
+            setTimeout(createUI, 3000);
+        }
+    });
 })();

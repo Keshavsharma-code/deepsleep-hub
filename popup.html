@@ -1,94 +1,70 @@
 <!DOCTYPE html>
 <html>
-
 <head>
+  <title>DeepSleep Hub</title>
   <style>
     body {
-      width: 400px;
-      height: 500px;
-      background: #050508;
-      color: white;
-      font-family: 'SF Mono', monospace;
+      width: 320px;
+      padding: 0;
       margin: 0;
-      padding: 20px;
+      background: #0f172a;
+      color: #f1f5f9;
+      font-family: 'SF Mono', 'Roboto Mono', monospace;
     }
-
-    h2 {
-      font-weight: normal;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
+    .header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      padding: 16px;
+      border-bottom: 1px solid #334155;
+      text-align: center;
     }
-
-    .status {
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 6px;
-      margin-bottom: 10px;
-      font-size: 12px;
-    }
-
-    .ai-status {
-      display: flex;
-      align-items: center;
-      margin: 8px 0;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+    .logo { font-size: 24px; margin-bottom: 4px; }
+    .status { font-size: 10px; color: #10b981; letter-spacing: 1px; }
+    
+    .menu { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    
+    .btn {
+      background: #3b82f6;
       color: white;
+      border: none;
+      padding: 12px;
       border-radius: 6px;
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 10px;
-      font-family: inherit;
+      text-align: center;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: block;
     }
+    .btn:hover { background: #2563eb; transform: translateY(-1px); }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #334155;
+      color: #94a3b8;
+    }
+    .btn-outline:hover { background: #1e293b; color: white; }
 
-    button:hover {
-      background: rgba(255, 255, 255, 0.2);
+    .memory-count {
+      font-size: 11px;
+      color: #64748b;
+      text-align: center;
+      margin-top: 8px;
     }
   </style>
 </head>
-
 <body>
-  <h2>DEEPSLEEP-HUB V2</h2>
-  <div class="status">Status: <span id="status">Active Semantic Graph</span></div>
-
-  <div class="ai-status">
-    <div class="dot" style="background: #ffffff;"></div>
-    <span>OpenAI (GPT-4)</span>
+  <div class="header">
+    <div class="logo">🧠</div>
+    <div class="status">NEURAL CORE ACTIVE</div>
   </div>
-  <div class="ai-status">
-    <div class="dot" style="background: #f97316;"></div>
-    <span>Claude (Anthropic)</span>
-  </div>
-  <div class="ai-status">
-    <div class="dot" style="background: #a855f7;"></div>
-    <span>Gemini (Google)</span>
-  </div>
-  <div class="ai-status">
-    <div class="dot" style="background: #ef4444;"></div>
-    <span>Kimi (Moonshot)</span>
-  </div>
-  <div class="ai-status">
-    <div class="dot" style="background: #fbbf24; box-shadow: 0 0 5px #fbbf24;"></div>
-    <span>DeepSleep-beta (Dream Nodes)</span>
+  
+  <div class="menu">
+    <a href="brain.html" target="_blank" class="btn">ENTER 3D VISUAL CORTEX</a>
+    <button id="reset-widget" class="btn btn-outline">RESTORE BRAIN ICON</button>
   </div>
 
-  <button id="open-brain">Enter Semantic Visualization</button>
-  <button id="clear-memory">Purge Vector Database</button>
+  <div class="memory-count" id="count">Connecting to neurons...</div>
 
-  <script src="lib/dexie.min.js"></script>
-  <script src="db.js"></script>
   <script src="popup.js"></script>
 </body>
-
 </html>
