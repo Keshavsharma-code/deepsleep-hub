@@ -93,24 +93,44 @@
         
         const banner = document.createElement('div');
         banner.id = 'ds-sync-banner';
-        banner.style = 'background: #0f172a; border-bottom: 2px solid #3b82f6; padding: 12px; position: fixed; top: 0; left: 0; width: 100%; z-index: 10002; display: flex; align-items: center; justify-content: space-between; font-family: "SF Mono", monospace; box-shadow: 0 4px 20px rgba(0,0,0,0.5);';
+        banner.style = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 50px;
+            background: rgba(3, 7, 18, 0.95); backdrop-filter: blur(10px);
+            color: white; z-index: 2147483647; display: flex;
+            align-items: center; justify-content: space-between; padding: 0 24px;
+            font-family: 'Inter', sans-serif; box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            border-bottom: 2px solid #3b82f6; transition: all 0.3s ease;
+        `;
+        
         banner.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <span style="animation: ds-pulse 2s infinite">📡</span>
-                <span style="color: #60a5fa; font-size: 11px; font-weight: 800; letter-spacing: 1px;">DEEPSLEEP NEURAL SYNC ACTIVE [v3.2]</span>
-                <span style="color: #94a3b8; font-size: 10px;">Context Found: ${thought.aiSource.toUpperCase()}</span>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 20px; filter: drop-shadow(0 0 5px #3b82f6);">🧠</span>
+                <div>
+                    <div style="font-size: 11px; font-weight: 800; color: #3b82f6; letter-spacing: 1px;">DEEPSLEEP NEURAL SYNC</div>
+                    <div style="font-size: 10px; color: #94a3b8;">Bridged Context from ${thought.aiSource.toUpperCase()}</div>
+                </div>
             </div>
-            <div style="display: flex; gap: 8px;">
-                <button id="ds-force-sync" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer; transition: all 0.2s;">FORCE SYNC BRAIN ⚡</button>
-                <button id="ds-hide-banner" style="background: transparent; color: #64748b; border: 1px solid #334155; padding: 6px; border-radius: 4px; font-size: 10px; cursor: pointer;">×</button>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <button id="ds-force-sync" style="
+                    background: linear-gradient(135deg, #3b82f6, #2563eb);
+                    color: white; border: none; padding: 8px 16px; border-radius: 6px;
+                    font-size: 11px; font-weight: 800; cursor: pointer;
+                    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); transition: all 0.2s;
+                ">FORCE SYNC BRAIN ⚡</button>
+                <div id="ds-hide-banner" style="cursor: pointer; font-size: 20px; color: #475569; padding: 5px;">×</div>
             </div>
             <style>
-                @keyframes ds-pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-                #ds-force-sync:hover { background: #2563eb; transform: scale(1.05); }
+                #ds-force-sync:hover { transform: scale(1.05); filter: brightness(1.1); }
+                #ds-hide-banner:hover { color: #f1f5f9; }
             </style>
         `;
-        // Top-level attachment to prevent Virtual DOM overwrite
-        document.documentElement.appendChild(banner);
+        
+        // Root injection to survive React DOM diffing
+        if (document.documentElement) {
+            document.documentElement.prepend(banner);
+        } else {
+            document.body.prepend(banner);
+        }
 
         document.getElementById('ds-force-sync').onclick = () => injectContext(thought, true);
         document.getElementById('ds-hide-banner').onclick = () => banner.remove();
