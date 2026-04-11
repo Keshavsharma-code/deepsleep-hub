@@ -2,68 +2,174 @@
 <html>
 <head>
   <title>DeepSleep Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #3b82f6;
+      --secondary: #10b981;
+      --bg: #030712;
+      --card: rgba(30, 41, 59, 0.7);
+    }
     body {
-      width: 320px;
-      padding: 0;
+      width: 350px;
       margin: 0;
-      background: #0f172a;
+      background: var(--bg);
       color: #f1f5f9;
-      font-family: 'SF Mono', 'Roboto Mono', monospace;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .main-container {
+      padding: 24px;
+      background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.15), transparent);
     }
     .header {
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      padding: 16px;
-      border-bottom: 1px solid #334155;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
     }
-    .logo { font-size: 24px; margin-bottom: 4px; }
-    .status { font-size: 10px; color: #10b981; letter-spacing: 1px; }
+    .logo-container {
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .logo-icon {
+      font-size: 40px;
+      filter: drop-shadow(0 0 10px var(--primary));
+      animation: pulse 3s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary)); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--primary)); }
+      100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--primary)); }
+    }
+    h1 {
+      font-weight: 800;
+      font-size: 18px;
+      margin: 0;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #f1f5f9, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .version {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: var(--primary);
+      margin-top: 4px;
+      opacity: 0.8;
+    }
     
-    .menu { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-    
+    .status-badge {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--secondary);
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      display: inline-block;
+    }
+
+    .card {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+    .card:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+      transform: translateY(-2px);
+    }
+
     .btn {
-      background: #3b82f6;
+      width: 100%;
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
       color: white;
       border: none;
-      padding: 12px;
-      border-radius: 6px;
+      padding: 14px;
+      border-radius: 8px;
       font-weight: 700;
+      font-size: 13px;
       cursor: pointer;
-      text-align: center;
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
       transition: all 0.2s;
-      display: block;
     }
-    .btn:hover { background: #2563eb; transform: translateY(-1px); }
-    
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #334155;
-      color: #94a3b8;
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
     }
-    .btn-outline:hover { background: #1e293b; color: white; }
 
-    .memory-count {
-      font-size: 11px;
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: none;
+      color: #94a3b8;
+      margin-top: 12px;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
       color: #64748b;
-      text-align: center;
-      margin-top: 8px;
+    }
+    .stat-value {
+      color: var(--secondary);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">🧠</div>
-    <div class="status">NEURAL CORE ACTIVE</div>
-  </div>
-  
-  <div class="menu">
-    <a href="brain.html" target="_blank" class="btn">ENTER 3D VISUAL CORTEX</a>
-    <button id="reset-widget" class="btn btn-outline">RESTORE BRAIN ICON</button>
-  </div>
+  <div class="main-container">
+    <div class="header">
+      <div class="logo-container">
+        <div class="logo-icon">🧠</div>
+      </div>
+      <h1>DeepSleep Hub</h1>
+      <div class="version">NEURAL ENGINE V6.0</div>
+    </div>
 
-  <div class="memory-count" id="count">Connecting to neurons...</div>
+    <center><div class="status-badge">● QUANTUM SYNC ACTIVE</div></center>
+    
+    <div class="card">
+      <div class="stat-row">
+        <span>Active Neurons</span>
+        <span class="stat-value" id="count">0</span>
+      </div>
+    </div>
+
+    <a href="brain.html" target="_blank" class="btn">
+      <span>ENTER VISUAL CORTEX</span>
+      <span style="font-size: 11px;">⚡</span>
+    </a>
+
+    <button id="reset-widget" class="btn btn-secondary">
+      RESTORE NEURAL WIDGET
+    </button>
+
+    <div style="margin-top: 24px; font-size: 10px; color: #475569; text-align: center;">
+      Unified Memory across ChatGPT, Grok & Kimi
+    </div>
+  </div>
 
   <script src="popup.js"></script>
 </body>
