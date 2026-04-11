@@ -1,14 +1,16 @@
-# DeepSleep-Hub (v6.0 Cinematic) 🚀🧠
-[![Version](https://img.shields.io/badge/Version-6.0--Cinematic-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
+# DeepSleep-Hub (v6.1 Cinematic) 🚀🧠
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/Version-6.1--Cinematic-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
+[![Extension](https://img.shields.io/badge/Manifest-V3-orange.svg)](manifest.json)
 [![Engine](https://img.shields.io/badge/Engine-Three.js-lightgrey.svg)](https://threejs.org)
 
 ![DeepSleep High-Fidelity Clusters](docs/visual_brain.png)
 
 ## 🌌 The Master A-to-Z Guide
-DeepSleep Hub v6.0 is a production-grade neural layer that bridges the gap between Cloud AI (ChatGPT, Kimi, Grok) and Local AI.
+DeepSleep Hub v6.1 is a production-grade neural layer that bridges the gap between Cloud AI (ChatGPT, Kimi, Grok) and Local AI.
 
 ### 1. Installation (The Neural Hook)
-1. **Download**: Get the latest [**DeepSleep-Hub-v6.0.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v6.0.zip).
+1. **Download**: Get the latest [**DeepSleep-Hub-v6.1.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v6.1.zip).
 2. **Developer Mode**: Go to `chrome://extensions/`, enable **Developer Mode**, and click **Load Unpacked**.
 3. **Select Folder**: Choose the `deepsleep-hub` folder.
 
@@ -25,9 +27,10 @@ DeepSleep Hub v6.0 is a production-grade neural layer that bridges the gap betwe
 1. Click the extension icon in your toolbar.
 2. Click **"ENTER VISUAL CORTEX"**.
 3. Explore your biological knowledge clusters in 3D. 
-   - **Click Node**: Copy to clipboard.
-   - **Scroll**: Zoom depth.
-   - **Z Key**: Toggle Zen Mode.
+
+---
+
+![DeepSleep Technical Data Architecture](docs/technical_flow.png)
 
 ---
 
@@ -39,7 +42,7 @@ DeepSleep Hub v6.0 is a production-grade neural layer that bridges the gap betwe
 
 ### 2. "Status 15 / File Not Found"
 - **Cause**: Chrome tried to load high-level modules incorrectly.
-- **Fix**: v6.0 has removed all module imports. Simply **Remove** the extension from Chrome and **Reload** it fresh.
+- **Fix**: v6.1 has removed all module imports. Simply **Remove** the extension from Chrome and **Reload** it fresh.
 
 ### 3. "AI says it doesn't know my history"
 - **Cause**: You didn't hit "Send" after the sync.
