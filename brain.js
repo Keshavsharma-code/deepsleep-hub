@@ -320,8 +320,10 @@ function addThoughtToUI(ai, concept, color) {
 
 function updateNeuralPressure() {
   const percent = Math.min((thoughtNodes.length / 60) * 100, 100);
-  document.getElementById('node-count').textContent = thoughtNodes.length;
-  document.getElementById('pressure-text').textContent = Math.floor(percent) + '%';
+  const nodeCountEl = document.getElementById('node-count');
+  if (nodeCountEl) nodeCountEl.textContent = thoughtNodes.length;
+  const pressureTextEl = document.getElementById('pressure-text');
+  if (pressureTextEl) pressureTextEl.textContent = Math.floor(percent) + '%';
   document.getElementById('pressure-bar').style.width = percent + '%';
 }
 

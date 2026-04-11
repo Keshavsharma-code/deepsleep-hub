@@ -1,7 +1,6 @@
-// message-queue.js
 // PRODUCTION-GRADE Batched Message Queue for deepsleep-hub
 
-export class BatchedMessageQueue {
+class BatchedMessageQueue {
   constructor(batchSize = 10, flushInterval = 1500) {
     this.queue = [];
     this.batchSize = batchSize;

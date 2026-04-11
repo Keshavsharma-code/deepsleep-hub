@@ -439,21 +439,11 @@
 
   <div class="panel bottom-bar" style="pointer-events: auto;">
     <div class="circle-btns">
-      <div class="circle-btn" style="border-color: #ffffff; color: #ffffff;"
-        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'openai', text: 'Simulated reasoning generated successfully. Optimization routines initialized.', concepts: [{name: 'Optimization'}]})">
-        GPT</div>
-      <div class="circle-btn" style="border-color: #3b82f6; color: #3b82f6;"
-        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'codex', text: 'Compiling syntax tree and resolving semantic tokens.', concepts: [{name: 'Parser'}]})">
-        CODEX</div>
-      <div class="circle-btn" style="border-color: #f97316; color: #f97316;"
-        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'claude', text: 'Analyzing ethical constraints and structural nuance.', concepts: [{name: 'Analysis'}]})">
-        CLAUDE</div>
-      <div class="circle-btn" style="border-color: #a855f7; color: #a855f7;"
-        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'gemini', text: 'Multimodal extraction indexing triggered.', concepts: [{name: 'Indexing'}]})">
-        GEMINI</div>
-      <div class="circle-btn" style="border-color: #ef4444; color: #ef4444;"
-        onclick="window._handleExtMsg({type: 'NEW_THOUGHT', ai: 'kimi', text: 'Long-context vector scanning complete.', concepts: [{name: 'Vectors'}]})">
-        KIMI</div>
+      <div class="circle-btn" id="btn-gpt" style="border-color: #ffffff; color: #ffffff;">GPT</div>
+      <div class="circle-btn" id="btn-codex" style="border-color: #3b82f6; color: #3b82f6;">CODEX</div>
+      <div class="circle-btn" id="btn-claude" style="border-color: #f97316; color: #f97316;">CLAUDE</div>
+      <div class="circle-btn" id="btn-gemini" style="border-color: #a855f7; color: #a855f7;">GEMINI</div>
+      <div class="circle-btn" id="btn-kimi" style="border-color: #ef4444; color: #ef4444;">KIMI</div>
     </div>
     <div class="legend-text">
       <span>Node generation</span>
@@ -483,35 +473,7 @@
   <script src="diagnostics.js" type="module"></script>
   <script src="brain.js"></script>
 
-  <script>
-    const toggleBtn = document.getElementById('toggle-ui');
-    const uiLayer = document.getElementById('ui-layer');
-    const bottomBar = document.querySelector('.bottom-bar');
-    let uiVisible = true;
-
-    toggleBtn.addEventListener('click', () => {
-      uiVisible = !uiVisible;
-      if (uiVisible) {
-        uiLayer.style.opacity = '1';
-        uiLayer.style.pointerEvents = 'none'; // container itself is none, children are auto
-        Array.from(uiLayer.children).forEach(c => c.style.pointerEvents = 'auto');
-        bottomBar.style.opacity = '1';
-        bottomBar.style.pointerEvents = 'auto';
-        toggleBtn.innerText = 'MINIMIZE UI ⌘';
-      } else {
-        uiLayer.style.opacity = '0';
-        uiLayer.style.pointerEvents = 'none';
-        Array.from(uiLayer.children).forEach(c => c.style.pointerEvents = 'none');
-        bottomBar.style.opacity = '0';
-        bottomBar.style.pointerEvents = 'none';
-        toggleBtn.innerText = 'RESTORE UI ⌘';
-      }
-    });
-
-    // Add CSS transitions to UI elements for smooth fade
-    uiLayer.style.transition = 'opacity 0.3s ease';
-    bottomBar.style.transition = 'opacity 0.3s ease';
-  </script>
+  <script src="ui-handlers.js"></script>
 </body>
 
 </html>

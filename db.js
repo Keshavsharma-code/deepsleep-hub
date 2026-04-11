@@ -1,4 +1,4 @@
-const Dexie = window.Dexie;
+const Dexie = globalThis.Dexie || (typeof self !== 'undefined' ? self.Dexie : null);
 
 // db.js - Production-grade database layer
 class DeepSleepDB extends Dexie {
