@@ -1,6 +1,6 @@
-# DeepSleep-Hub (v2.2)
+# DeepSleep-Hub (v2.3)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-2.2--stable-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
+[![Version](https://img.shields.io/badge/Version-2.3--stable-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
 [![Extension](https://img.shields.io/badge/Manifest-V3-orange.svg)](manifest.json)
 [![Visuals](https://img.shields.io/badge/Engine-Three.js-lightgrey.svg)](https://threejs.org)
 
@@ -8,6 +8,14 @@
 
 # Stop Forgetting your AI's Intelligence.
 ### The first cinematic 3D memory layer for ChatGPT, Claude, and Gemini.
+
+## 🚀 NEW: Neural Injection (Zero-Copy Interconnectivity)
+DeepSleep v2.3 introduces **Zero-Copy Injection**. You no longer need to copy/paste history manually. 
+*   **The Brain Widget**: A small, floating 🧠 brain icon now appears inside every AI chat window.
+*   **One-Click Context**: Click the brain to see your most recent memories from *other* AIs (e.g. bridging a Claude session into ChatGPT).
+*   **Instant Injection**: Click any memory to instantly inject it directly into your current chat box. 
+
+---
 
 > [!CAUTION]
 > **DEVELOPER MODE REQUIRED**: This extension is a high-octane experimental memory engine. It is **NOT** in the Google Chrome Web Store. You must install it via the "Load Unpacked" method.

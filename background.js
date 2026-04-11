@@ -23,6 +23,17 @@ chrome.runtime?.onMessage?.addListener((request, sender, sendResponse) => {
       });
     return true; 
   }
+  
+  if (request.type === 'GET_RECENT_THOUGHTS') {
+    GraphDB.getAllData()
+      .then(data => {
+          // Sort by timestamp and take top 5
+          const sorted = data.nodes.sort((a,b) => b.timestamp - a.timestamp).slice(0, 5);
+          sendResponse({ success: true, thoughts: sorted });
+      })
+      .catch(err => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
 });
 
 async function processThoughtAsync(ai, content, fullLog) {

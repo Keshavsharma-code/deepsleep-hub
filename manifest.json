@@ -26,27 +26,32 @@
   "content_scripts": [
     {
       "matches": ["https://chat.openai.com/*", "https://chatgpt.com/*"],
-      "js": ["message-queue.js", "content-gpt.js"],
+      "js": ["message-queue.js", "content-gpt.js", "injector.js"],
+      "css": ["injector.css"],
       "run_at": "document_idle"
     },
     {
       "matches": ["https://claude.ai/*"],
-      "js": ["message-queue.js", "content-claude.js"],
+      "js": ["message-queue.js", "content-claude.js", "injector.js"],
+      "css": ["injector.css"],
       "run_at": "document_idle"
     },
     {
       "matches": ["https://gemini.google.com/*"],
-      "js": ["message-queue.js", "content-gemini.js"],
+      "js": ["message-queue.js", "content-gemini.js", "injector.js"],
+      "css": ["injector.css"],
       "run_at": "document_idle"
     },
     {
       "matches": ["https://kimi.moonshot.cn/*"],
-      "js": ["message-queue.js", "content-kimi.js"],
+      "js": ["message-queue.js", "content-kimi.js", "injector.js"],
+      "css": ["injector.css"],
       "run_at": "document_idle"
     },
     {
       "matches": ["http://localhost:*/*", "http://127.0.0.1:*/*"],
-      "js": ["message-queue.js", "content-local.js"],
+      "js": ["message-queue.js", "content-local.js", "injector.js"],
+      "css": ["injector.css"],
       "run_at": "document_idle"
     }
   ]
