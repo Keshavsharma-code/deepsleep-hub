@@ -1,44 +1,28 @@
-# DeepSleep-Hub (v2.0)
+# DeepSleep-Hub (v2.1)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-2.0--stable-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
+[![Version](https://img.shields.io/badge/Version-2.1--stable-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
 [![Extension](https://img.shields.io/badge/Manifest-V3-orange.svg)](manifest.json)
-[![Visuals](https://img.shields.io/badge/Engine-Three.js-lightgrey.svg)](https://threejs.org)
 
-# Stop Forgetting your AI's Intelligence.
-### The first cinematic 3D memory layer for ChatGPT, Claude, and Gemini.
+> [!CAUTION]
+> **DEVELOPER MODE REQUIRED**: This extension is a high-octane experimental memory engine. It is **NOT** in the Google Chrome Web Store. You must install it via the "Load Unpacked" method.
 
-![DeepSleep High-Fidelity Clusters](docs/visual_brain.png)
+## 🚀 The AI Thought Bridge
+DeepSleep-Hub doesn't just watch you chat—it extracts the semantic essence of your conversations across **ChatGPT, Claude, Gemini, and Kimi**. It stores these memories in a local, encrypted vector database so you can bridge the gap between AI assistants.
 
-## 🧠 Why DeepSleep-Hub?
-Assistants change. Your context shouldn't. DeepSleep-Hub unifies every AI interaction into a single, pulsing biological map. It’s not just an extension; it’s a **Second Brain with Chromatic Aberration.**
+---
 
-## 🚀 New in v2.0: Production Hardening
-We have completely re-engineered the core for industrial-strength reliability:
-- **IndexedDB Reliability (Dexie.js)**: Full schema versioning and ACID transactions.
-- **Quota Management**: Proactive storage monitoring with LRU eviction to prevent browser crashes.
-- **MV3 Lifecycle Persistence**: Service Worker pulse-checks ensure the memory layer never sleeps.
-- **Message Batching**: Debounced thought-capture prevents browser messaging overhead even during rapid chats.
-- **Offline-First**: Zero external dependencies. All 3D assets and libraries are bundled locally.
+## 🛠 How to "Attach" to AI Models
+DeepSleep Hub connects automatically to major LLM interfaces. Once installed:
+1.  **Open any supported AI** (e.g., [chatgpt.com](https://chatgpt.com)).
+2.  **Start Chatting**: As soon as the AI replies, the "Scout" script captures the thought.
+3.  **Confirm Connection**: Look for a subtle **green border** on the AI's response—this is the physical confirmation that the thought has been bridged to your 3D neural map.
 
-## 🔥 Join the Collective
-We are looking for cinematic builders to help us evolve the Visual Cortex. 
-[Read the Contributing Guide](./CONTRIBUTING.md) to start forking and building.
+---
 
-**Assistants change. Your context doesn't.**
-
-DeepSleep-Hub is a coordinate-free, cinematic knowledge bridge that ensures your AI mental map persists across **ChatGPT, Claude, Gemini, and Local Llama**. It acts as the "connective tissue" for your digital intelligence—so when you switch from debugging with Claude to local reasoning with Llama, your neural interface already holds the relevant codebase context.
-
-![DeepSleep Cognitive Bridge Workflow](docs/cognitive_bridge.png)
-
-## 🚀 Quickstart: Installation
-
-Because DeepSleep-Hub is a coordinate-free memory engine, it is currently deployed as a **Developer Mode** extension. It is NOT in the Chrome Web Store yet.
-
-### 1. Enable Developer Mode
-1. Download the latest production build: [**DeepSleep-Hub-v2.0.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v2.0.zip).
-2. Open Google Chrome (or any Chromium browser like Brave/Edge).
-3. Type `chrome://extensions/` in the address bar and hit Enter.
-4. In the top-right corner, toggle **Developer mode** to **ON**.
+## 📥 Installation (The Real Way)
+1.  Download the latest production build: [**DeepSleep-Hub-v2.1.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v2.1.zip).
+2.  Open `chrome://extensions/` and toggle **Developer mode** to **ON**.
+3.  Click **Load unpacked** and select the extension folder.
 
 ### 2. Load the Engine
 1. Click the **Load unpacked** button (top left).

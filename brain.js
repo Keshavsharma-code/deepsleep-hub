@@ -456,6 +456,26 @@ window.addEventListener('mousedown', (e) => {
 
 window.addEventListener('contextmenu', onRightClick);
 
+// Context Bridge: Copy Memory to Clipboard
+document.getElementById('copy-context').addEventListener('click', () => {
+    const content = document.getElementById('trace-content').innerText;
+    const ai = document.getElementById('trace-ai-type').innerText;
+    const concept = document.getElementById('trace-lobe').innerText;
+    
+    const formattedText = `[DeepSleep Memory Bridge | Source: ${ai}]\nConcept: ${concept}\nContext: ${content}`;
+    
+    navigator.clipboard.writeText(formattedText).then(() => {
+        const btn = document.getElementById('copy-context');
+        const originalText = btn.innerText;
+        btn.innerText = 'COPIED TO MEMORY! ✨';
+        btn.style.background = '#10b981';
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.background = '#3b82f6';
+        }, 2000);
+    });
+});
+
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
