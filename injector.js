@@ -150,12 +150,23 @@
             
             target.focus();
             
+            // Industrial-strength React/Next.js state update
+            const setValue = (el, value) => {
+                const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+                if (!setter && el.tagName !== 'TEXTAREA') {
+                   // For contenteditable, we use execCommand but also trigger events
+                   document.execCommand('insertText', false, value);
+                } else {
+                   setter.call(el, value);
+                }
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            };
+
             if (target.tagName === 'TEXTAREA') {
-                const start = target.value.startsWith('[DeepSleep') ? 0 : target.value.length;
-                target.value = contextText + target.value;
-                target.dispatchEvent(new Event('input', { bubbles: true }));
+                const existing = target.value;
+                setValue(target, contextText + existing);
             } else {
-                // High-Reliability contenteditable injection
+                // contenteditable handshake
                 const selection = window.getSelection();
                 const range = document.createRange();
                 range.selectNodeContents(target);
@@ -164,7 +175,6 @@
                 selection.addRange(range);
                 document.execCommand('insertText', false, contextText);
                 
-                // Trigger React/Next.js state updates
                 target.dispatchEvent(new Event('input', { bubbles: true }));
                 target.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText', data: contextText }));
             }
@@ -176,8 +186,14 @@
                     btn.style.background = '#10b981';
                 }
             } else {
-                document.querySelector('.deepsleep-overlay').classList.remove('active');
+                const overlay = document.querySelector('.deepsleep-overlay');
+                if (overlay) overlay.classList.remove('active');
             }
+            
+            // Visual feedback on the target itself
+            target.style.outline = '2px solid #3b82f6';
+            setTimeout(() => target.style.outline = 'none', 1000);
+            
             console.log(`🧠 [DeepSleep] ${thought.aiSource} context injected successfully.`);
         } else {
             console.error('🧠 [DeepSleep] ERROR: Could not locate chat input box.');
