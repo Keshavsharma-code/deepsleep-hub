@@ -16,11 +16,16 @@ export interface CognitiveThought {
         confidence: number;
     };
     color?: string;
+    vector?: number[];
+    rawJson?: any;
 }
 
 export interface SyncMessage {
-    type: 'CAPTURE_THOUGHT' | 'GET_RECENT_THOUGHTS' | 'CLEAR_MEMORY';
+    type: 'CAPTURE_THOUGHT' | 'GET_RECENT_THOUGHTS' | 'CLEAR_MEMORY' | 'API_DATA_CAPTURED';
     payload?: any;
+    url?: string;
+    ai?: string;
+    content?: string;
 }
 
 export interface StorageSchema {

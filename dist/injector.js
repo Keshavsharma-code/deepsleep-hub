@@ -58,9 +58,9 @@ class CognitiveInjector {
             if (target)
                 break;
         }
-        if (target && target.innerText.trim() === "") {
+        const payload = `[DeepSleep Adaptive Recall from ${thought.aiSource.toUpperCase()}]\n${thought.content}\n---\n`;
+        if (target && (target.innerText.trim() === "" || target.tagName === 'TEXTAREA')) {
             console.log('🤖 [DeepSleep] Adaptive Recall: Automatically bridging context...');
-            const payload = `[DeepSleep Adaptive Recall from ${thought.aiSource.toUpperCase()}]\n${thought.content}\n---\n`;
             target.focus();
             const handshake = document.createElement('div');
             handshake.className = 'ds-handshake active';
@@ -72,6 +72,28 @@ class CognitiveInjector {
                 handshake.remove();
             }, 2000);
         }
+        else {
+            this.copyToBridge(payload);
+        }
+    }
+    copyToBridge(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            console.log('📋 [DeepSleep] Context copied to clipboard for manual bridge.');
+            this.showToast('HANDSHAKE READY: Paste into chat (Ctrl+V)');
+        });
+    }
+    showToast(msg) {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #10b981; color: white; padding: 12px 24px; border-radius: 8px;
+            font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 800;
+            z-index: 2147483647; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: dsFadeUp 0.3s ease-out;
+        `;
+        toast.innerText = msg;
+        this.shadow?.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
     }
 }
 new CognitiveInjector();
