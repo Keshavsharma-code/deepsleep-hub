@@ -1,4 +1,24 @@
-import { CognitiveThought } from './types.js';
+/**
+ * DeepSleep Cognitive Types v1.0.0 (Standalone for Browser)
+ */
+
+type AISource = 'chatgpt' | 'claude' | 'gemini' | 'kimi' | 'grok' | 'local' | 'unknown';
+
+interface CognitiveThought {
+    id: string;
+    aiSource: AISource;
+    content: string;
+    timestamp: number;
+    metadata: {
+        url: string;
+        title: string;
+        topic?: string;
+        confidence: number;
+    };
+    color?: string;
+    vector?: number[];
+    rawJson?: any;
+}
 
 class CognitiveInjector {
     private PLATFORM_SELECTORS = {
@@ -64,6 +84,7 @@ class CognitiveInjector {
             .ds-brain-widget:hover { transform: scale(1.1) rotate(5deg); border-color: var(--ds-primary); }
             @keyframes dsPulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
             .ds-pulse { animation: dsPulse 2s infinite; }
+            @keyframes dsFadeUp { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
         `;
         this.shadow?.appendChild(style);
     }
@@ -92,11 +113,10 @@ class CognitiveInjector {
 
         const payload = `[DeepSleep Adaptive Recall from ${thought.aiSource.toUpperCase()}]\n${thought.content}\n---\n`;
 
-        if (target && (target.innerText.trim() === "" || target.tagName === 'TEXTAREA')) {
+        if (target && (target.innerText.trim() === "" || target.tagName === 'TEXTAREA' || target.getAttribute('role') === 'textbox')) {
             console.log('🤖 [DeepSleep] Adaptive Recall: Automatically bridging context...');
             target.focus();
             
-            // Visual Handshake
             const handshake = document.createElement('div');
             handshake.className = 'ds-handshake active';
             this.shadow?.appendChild(handshake);
@@ -105,18 +125,18 @@ class CognitiveInjector {
             
             target.style.outline = '2px solid var(--ds-primary)';
             setTimeout(() => {
-                target.style.outline = 'none';
+                const s = target as HTMLElement;
+                s.style.outline = 'none';
                 handshake.remove();
             }, 2000);
         } else {
-            // Clipboard Fallback
             this.copyToBridge(payload);
         }
     }
 
     private copyToBridge(text: string) {
         navigator.clipboard.writeText(text).then(() => {
-            console.log('📋 [DeepSleep] Context copied to clipboard for manual bridge.');
+            console.log('📋 [DeepSleep] Context copied to clipboard.');
             this.showToast('HANDSHAKE READY: Paste into chat (Ctrl+V)');
         });
     }
@@ -124,10 +144,10 @@ class CognitiveInjector {
     private showToast(msg: string) {
         const toast = document.createElement('div');
         toast.style.cssText = `
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
             background: #10b981; color: white; padding: 12px 24px; border-radius: 8px;
             font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 800;
-            z-index: 2147483647; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            z-index: 2147483647; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             animation: dsFadeUp 0.3s ease-out;
         `;
         toast.innerText = msg;
