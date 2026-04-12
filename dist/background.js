@@ -1,13 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_js_1 = require("./adapters/index.js");
+import { ChatGPTAdapter, ClaudeAdapter, KimiAdapter } from './adapters/index.js';
 const TRANSFORMERS_CDN = 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
 class BackgroundEngine {
     MAX_NEURONS = 100;
     adapters = [
-        new index_js_1.ChatGPTAdapter(),
-        new index_js_1.ClaudeAdapter(),
-        new index_js_1.KimiAdapter()
+        new ChatGPTAdapter(),
+        new ClaudeAdapter(),
+        new KimiAdapter()
     ];
     embedder = null;
     constructor() {

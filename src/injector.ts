@@ -24,9 +24,20 @@ class CognitiveInjector {
 
         this.shadow = this.root.attachShadow({ mode: 'open' });
         this.injectStyles();
+        this.createWidget();
         this.setupGuardian();
         
         setTimeout(() => this.adaptiveRecall(), 2000);
+        console.log('🦾 [DeepSleep] Industrial Injector Online.');
+    }
+
+    private createWidget() {
+        const widget = document.createElement('div');
+        widget.id = 'ds-widget';
+        widget.className = 'ds-brain-widget';
+        widget.innerHTML = '🧠';
+        widget.onclick = () => this.adaptiveRecall();
+        this.shadow?.appendChild(widget);
     }
 
     private injectStyles() {
@@ -40,6 +51,19 @@ class CognitiveInjector {
                 transition: all 0.5s;
             }
             .ds-handshake.active { transform: scale(3); opacity: 0.8; }
+            .ds-brain-widget {
+                position: fixed; bottom: 20px; right: 20px; width: 44px; height: 44px;
+                background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 20px; cursor: pointer; z-index: 2147483647;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                user-select: none;
+            }
+            .ds-brain-widget:hover { transform: scale(1.1) rotate(5deg); border-color: var(--ds-primary); }
+            @keyframes dsPulse { 0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); } 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+            .ds-pulse { animation: dsPulse 2s infinite; }
         `;
         this.shadow?.appendChild(style);
     }

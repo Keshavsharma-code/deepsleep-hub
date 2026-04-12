@@ -1,22 +1,15 @@
 /**
  * content.ts - DeepSleep Cognitive Bridge v1.0.0
- * Bridges Network Interceptor to Background Engine.
+ * Bridges MAIN world (Interceptors) to ISOLATED world (Background).
  */
 
-// Inject Network Interceptor
-function injectInterceptor() {
-    const script = document.createElement('script');
-    script.src = chrome.runtime.getURL('dist/interceptors/network.js');
-    (document.head || document.documentElement).appendChild(script);
-    script.onload = () => script.remove();
-}
+console.log('🧠 [DeepSleep] Content Bridge Active.');
 
-injectInterceptor();
-
-// Listen for Interceptor Handshake
+// Listen for Interceptor Handshake (from MAIN world)
 window.addEventListener('message', (event) => {
     if (event.data?.type === 'DEEPSLEEP_API_CAPTURE') {
         const { url, payload } = event.data;
+        console.log('📡 [DeepSleep] Intercepted traffic from MAIN world:', url);
         chrome.runtime.sendMessage({
             type: 'API_DATA_CAPTURED',
             url: url,
@@ -24,5 +17,3 @@ window.addEventListener('message', (event) => {
         });
     }
 });
-
-console.log('🧠 [DeepSleep 1.0.0] Cognitive Observer Active.');

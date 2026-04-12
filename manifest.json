@@ -3,7 +3,7 @@
   "name": "DeepSleep Hub",
   "version": "1.0.0",
   "description": "The Universal AI Cognitive Bridge. Connects ChatGPT, Claude, and Gemini with local project memory.",
-  "permissions": ["storage", "unlimitedStorage"],
+  "permissions": ["storage", "unlimitedStorage", "scripting"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -26,7 +26,22 @@
         "https://grok.com/*",
         "http://localhost:*/*"
       ],
-      "js": ["dist/content.js", "dist/injector.js"]
+      "js": ["dist/content.js", "dist/injector.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://*.chatgpt.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://www.kimi.com/*",
+        "https://grok.com/*",
+        "http://localhost:*/*"
+      ],
+      "js": ["dist/interceptors/network.js"],
+      "world": "MAIN",
+      "run_at": "document_start"
     }
   ],
   "web_accessible_resources": [

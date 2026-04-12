@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 (function () {
     const originalFetch = window.fetch;
     const originalXHR = window.XMLHttpRequest.prototype.open;
