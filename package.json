@@ -1,0 +1,29 @@
+{
+  "name": "deepsleep-hub",
+  "version": "1.0.0",
+  "description": "[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT) [![Version](https://img.shields.io/badge/Version-7.0--Industrial-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases) [![Extension](https://img.shields.io/badge/Manifest-V3-orange.svg)](manifest.json) [![Engine](https://img.shields.io/badge/Engine-Three.js-lightgrey.svg)](https://threejs.org)",
+  "main": "background.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Keshavsharma-code/deepsleep-hub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Keshavsharma-code/deepsleep-hub/issues"
+  },
+  "homepage": "https://github.com/Keshavsharma-code/deepsleep-hub#readme",
+  "devDependencies": {
+    "@types/chrome": "^0.1.40",
+    "typescript": "^6.0.2"
+  }
+}

@@ -1,52 +1,37 @@
 {
   "manifest_version": 3,
   "name": "DeepSleep Hub",
-  "version": "5.0.0",
-  "description": "Universal AI Memory Bridge with 3D Neural Cortex. Connects ChatGPT, Kimi, Grok, and Local AIs.",
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-  "permissions": ["storage", "activeTab", "scripting", "alarms", "clipboardWrite"],
-  "host_permissions": [
-    "https://chat.openai.com/*",
-    "https://chatgpt.com/*",
-    "https://claude.ai/*",
-    "https://gemini.google.com/*",
-    "https://kimi.moonshot.cn/*",
-    "https://www.kimi.com/*",
-    "https://x.com/*",
-    "http://localhost:*/*",
-    "http://127.0.0.1:*/*"
-  ],
+  "version": "1.0.0",
+  "description": "The Universal AI Cognitive Bridge. Connects ChatGPT, Claude, and Gemini with local project memory.",
+  "permissions": ["storage", "unlimitedStorage"],
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "dist/background.js"
   },
   "content_scripts": [
     {
       "matches": [
         "https://chatgpt.com/*",
-        "https://chat.openai.com/*",
+        "https://*.chatgpt.com/*",
         "https://claude.ai/*",
         "https://gemini.google.com/*",
-        "https://kimi.moonshot.cn/*",
         "https://www.kimi.com/*",
-        "https://x.com/*",
-        "http://localhost:*/*",
-        "http://127.0.0.1:*/*"
+        "https://grok.com/*",
+        "http://localhost:*/*"
       ],
-      "js": ["content.js", "injector.js"],
-      "css": ["injector.css"],
-      "run_at": "document_idle"
+      "js": ["dist/content.js", "dist/injector.js"]
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["brain.html", "brain.js", "lib/*", "icons/*", "styles.css", "ui-handlers.js"],
+      "resources": ["dist/*", "lib/*", "icons/*", "brain.html", "brain.js"],
       "matches": ["<all_urls>"]
     }
   ]
