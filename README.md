@@ -9,6 +9,13 @@
 ## 🌌 The Master A-to-Z Guide
 DeepSleep Hub v6.1 is a production-grade neural layer that bridges the gap between Cloud AI (ChatGPT, Kimi, Grok) and Local AI.
 
+---
+
+### 🔗 The DeepSleep Ecosystem
+*   **[DeepSleep-beta](https://github.com/Keshavsharma-code/DeepSleep-beta)**: Our terminal-based sibling. A high-speed background agent for local dev project memory and idle-time "dreaming."
+
+---
+
 ### 1. Installation (The Neural Hook)
 1. **Download**: Get the latest [**DeepSleep-Hub-v6.1.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v6.1.zip).
 2. **Developer Mode**: Go to `chrome://extensions/`, enable **Developer Mode**, and click **Load Unpacked**.
