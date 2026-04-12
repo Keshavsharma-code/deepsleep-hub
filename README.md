@@ -1,13 +1,13 @@
-# DeepSleep-Hub (v6.1 Cinematic) 🚀🧠
+# DeepSleep-Hub (v7.0 Industrial) 🚀🧠
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-6.1--Cinematic-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
+[![Version](https://img.shields.io/badge/Version-7.0--Industrial-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
 [![Extension](https://img.shields.io/badge/Manifest-V3-orange.svg)](manifest.json)
 [![Engine](https://img.shields.io/badge/Engine-Three.js-lightgrey.svg)](https://threejs.org)
 
 ![DeepSleep High-Fidelity Clusters](docs/visual_brain.png)
 
 ## 🌌 The Master A-to-Z Guide
-DeepSleep Hub v6.1 is a production-grade neural layer that bridges the gap between Cloud AI (ChatGPT, Kimi, Grok) and Local AI.
+DeepSleep Hub v7.0 is a production-grade neural layer that bridges the gap between Cloud AI (ChatGPT, Kimi, Grok) and Local AI using **Industrial Shadow DOM Architecture**.
 
 ---
 
@@ -17,7 +17,7 @@ DeepSleep Hub v6.1 is a production-grade neural layer that bridges the gap betwe
 ---
 
 ### 1. Installation (The Neural Hook)
-1. **Download**: Get the latest [**DeepSleep-Hub-v6.1.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v6.1.zip).
+1. **Download**: Get the latest [**DeepSleep-Hub-v7.0.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v7.0.zip).
 2. **Developer Mode**: Go to `chrome://extensions/`, enable **Developer Mode**, and click **Load Unpacked**.
 3. **Select Folder**: Choose the `deepsleep-hub` folder.
 
@@ -44,12 +44,12 @@ DeepSleep Hub v6.1 is a production-grade neural layer that bridges the gap betwe
 ## 🛠 Troubleshooting: "Help, it's not working!"
 
 ### 1. "The Force Sync button is missing"
-- **Cause**: The platform (ChatGPT/Kimi) might have re-rendered its top bar.
-- **Fix**: Refresh the page or click the floating 🧠 icon to trigger the overlay menu manually.
+- **Cause**: The platform might have re-rendered its top bar.
+- **Fix**: v7.0 uses a **Shadow DOM Guardian**. If the button is missing, wait 1 second—the Guardian will automatically re-inject it. If it still doesn't appear, refresh the page.
 
 ### 2. "Status 15 / File Not Found"
-- **Cause**: Chrome tried to load high-level modules incorrectly.
-- **Fix**: v6.1 has removed all module imports. Simply **Remove** the extension from Chrome and **Reload** it fresh.
+- **Cause**: Chrome tried to load modules asynchronously in an unsupported way.
+- **Fix**: v7.0 uses a **Unified Shadow Module** pattern. Simply **Remove** the extension from Chrome and **Reload** it fresh.
 
 ### 3. "AI says it doesn't know my history"
 - **Cause**: You didn't hit "Send" after the sync.
@@ -58,13 +58,11 @@ DeepSleep Hub v6.1 is a production-grade neural layer that bridges the gap betwe
 ---
 
 ## 🏗 Contributing & Git Flow
-We welcome cinematic builders! 
+We welcome industrial builders! 
 1. **Fork** the repo.
-2. **Branch**: Create `feat/your-neural-upgrade`.
-3. **Code**: No ES modules! Use global scope patterns to maintain Status 15 immunity.
-4. **Pull Request**: We review and merge into the next Cinematic release.
-
-**If you encounter Git errors**: Run `git fetch --all` then `git reset --hard origin/main`.
+2. **Branch**: Create `feat/your-industrial-upgrade`.
+3. **Code**: Use the `DeepSleepShadow` class pattern to ensure UI isolation.
+4. **Pull Request**: We review and merge into the next Industrial release.
 
 ---
 
