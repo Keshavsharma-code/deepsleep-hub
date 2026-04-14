@@ -2,92 +2,168 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/Version-2.0.0--OmniBrain-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
 [![Stable](https://img.shields.io/badge/Stability-Industrial-orange.svg)](https://github.com/Keshavsharma-code/deepsleep-hub)
-[![Engine](https://img.shields.io/badge/Engine-TypeScript-lightgrey.svg)](https://www.typescriptlang.org/)
+[![Engine](https://img.shields.io/badge/Engine-Vanilla_JS-lightgrey.svg)](https://github.com/Keshavsharma-code/deepsleep-hub)
 [![AIs](https://img.shields.io/badge/AIs_Connected-8-purple.svg)](https://github.com/Keshavsharma-code/deepsleep-hub)
+[![Works](https://img.shields.io/badge/Status-Actually_Works-brightgreen.svg)](https://github.com/Keshavsharma-code/deepsleep-hub)
 
 ![The Neural Cortex](docs/visual_brain.png)
 
-## 🌌 The Universal AI Memory Bridge — 8 AIs, One Brain
-**DeepSleep Hub** is a production-grade cognitive layer connecting **ChatGPT, Claude, Gemini, Grok, DeepSeek, Perplexity, and Kimi** through a shared local memory graph. No AI ever forgets what another one learned.
+## 🌌 8 AIs. One Brain. No AI Ever Forgets.
 
-> The 3D brain **literally grows** — each AI's lobe expands in real-time as you use that platform more.
+**DeepSleep Hub** is a real, working Chrome extension that connects **ChatGPT, Claude, Gemini, Grok, DeepSeek, Perplexity, and Kimi** through a single shared memory graph stored on your machine.
 
----
+This is not a concept. This is not a mockup. Install it, open any of the 8 AI platforms, and watch it work.
 
-### 🔗 The DeepSleep Ecosystem
-
-> **Try [DeepSleep-beta](https://github.com/Keshavsharma-code/DeepSleep-beta) — our terminal-based companion agent.**
-> A high-speed background daemon for local dev project memory and idle-time "dreaming." Run it alongside DeepSleep Hub for full local + browser AI memory coverage.
+> **The 3D brain is live.** Each AI has its own lobe. The more you use an AI, the bigger its lobe physically grows in real-time.
 
 ---
 
-## 💡 Why DeepSleep? (The Use Cases)
+### 🔗 Also Try: DeepSleep Beta
 
-1. **Context Continuity**: Chatting with Claude about a complex bug? Switch to ChatGPT or DeepSeek for a second opinion. DeepSleep bridges the context instantly — no copy-pasting.
-2. **8-Platform Memory**: ChatGPT, Claude, Gemini, Grok, DeepSeek, Perplexity, Kimi — all sharing a single local knowledge graph. No AI forgets what another one learned.
-3. **Living 3D Brain**: Your Visual Cortex is a real-time 3D brain where each AI has its own lobe. The more you use an AI, the bigger its lobe grows.
-4. **Multi-Model Intelligence**: Combine Grok's real-time search, GPT-4o's reasoning, Claude's depth, and DeepSeek's analysis — with one shared memory.
-5. **Offline Preservation**: Your conversations are vectorized and stored locally via IndexedDB. You own your data. No cloud. No tracking.
+> **[DeepSleep-beta](https://github.com/Keshavsharma-code/DeepSleep-beta)** — the terminal-based companion agent.
+> A background daemon for local dev project memory and idle-time "dreaming." Run it alongside DeepSleep Hub for full local + browser AI memory.
 
 ---
 
-## 🚀 Step-by-Step Master Guide
+## ✅ What Actually Works (Proof)
 
-### 1. Installation (The Neural Hook)
-1. **Download**: Get the [**DeepSleep-Hub-v1.0.0.zip**](https://github.com/Keshavsharma-code/deepsleep-hub/raw/main/DeepSleep-Hub-v1.0.0.zip).
-2. **Extract**: Unzip the folder to a safe location.
-3. **Developer Mode**: Open Chrome and go to `chrome://extensions/`.
-4. **Enable**: Toggle **Developer Mode** (top right).
-5. **Load**: Click **Load Unpacked** and select the `deepsleep-hub` folder.
+People see a 3D brain and assume it's fake. It isn't. Here's exactly what runs under the hood:
 
-### 2. Using Adaptive Recall (The Handshake)
-- **Automatic Capture**: Simply use any of the 8 supported AIs as normal. DeepSleep **intercepts the network traffic** silently.
-- **Visual Pulse**: The floating 🧠 will **Pulse Green** when it successfully captures an API event.
-- **Automatic Bridge**: Open a new chat. DeepSleep will detect the empty chat box and automatically prepare the **Adaptive Recall** handshake.
-- **The Delimiter**: You will see a `[DeepSleep Recall]` block appear in your prompt box. Just hit **Enter** to bridge the context.
+| Feature | How It Works | Status |
+|---|---|---|
+| **Captures AI responses** | `MutationObserver` on DOM + platform-specific selectors per AI | ✅ Live |
+| **Shared memory graph** | IndexedDB via Dexie.js — all 8 AIs write to the same local DB | ✅ Live |
+| **Context injected on new chat** | Shadow DOM injector detects empty chat, prepopulates input with recall block | ✅ Live |
+| **3D brain visualization** | Three.js with bloom, OrbitControls, particle effects, synapse trails | ✅ Live |
+| **Lobe grows with usage** | Per-AI usage count stored in `chrome.storage.local`, lobe scales up with smooth animation | ✅ Live |
+| **Semantic embeddings** | Transformers.js (`all-MiniLM-L6-v2`) runs fully on-device, no API key needed | ✅ Live |
+| **PageRank importance scoring** | Graph DB runs 5 iterations of damped PageRank to rank your most-used concepts | ✅ Live |
+| **Works offline** | All storage is local. No server. No account. No data leaves your machine. | ✅ Live |
 
-### 3. Exploring the Cortex
-1. Click the extension icon in your toolbar.
-2. Click **"ENTER VISUAL CORTEX"**.
-3. Explore your knowledge clusters in a high-fidelity 3D 🧠 graph.
+---
+
+## 🧠 How the Interconnection Actually Works
+
+When you use any supported AI, here is the exact sequence:
+
+```
+1. You get a response from Claude (or ChatGPT, Grok, DeepSeek, etc.)
+2. DeepSleep's MutationObserver detects new content on the page
+3. The response text is sent to the background service worker
+4. The service worker extracts concepts and computes semantic embeddings
+5. Concepts + relationships are stored in the shared IndexedDB graph
+6. Your usage count for that AI increments → its brain lobe grows
+7. You open a NEW chat on ANY of the 8 AIs
+8. DeepSleep detects an empty chat and auto-recalls from the shared DB
+9. A [DeepSleep Recall] block is injected into the input field
+10. You hit Enter — the new AI now knows what the other AI discussed
+```
+
+That's real interconnection. Not simulated. Not mocked. The DB is shared across all tabs.
+
+---
+
+## 💡 Why DeepSleep?
+
+1. **No context loss between AIs** — Claude figured something out. Switch to ChatGPT. DeepSleep bridges it instantly.
+2. **8 platforms, one memory** — ChatGPT, Claude, Gemini, Grok, DeepSeek, Perplexity, Kimi all read from and write to the same graph.
+3. **Living 3D brain** — watch your knowledge grow in real-time. The AI you use most has the biggest lobe.
+4. **Multi-model workflows** — use Grok for real-time info, DeepSeek for reasoning, Claude for depth, GPT for output — all remembering each other.
+5. **Your data stays yours** — 100% local. IndexedDB. No cloud sync. No tracking. No accounts.
+
+---
+
+## 🚀 Installation (2 Minutes)
+
+1. **Download**: Clone this repo or download the ZIP.
+   ```bash
+   git clone https://github.com/Keshavsharma-code/deepsleep-hub.git
+   ```
+2. **Open Chrome** → go to `chrome://extensions/`
+3. **Enable Developer Mode** (toggle top-right)
+4. **Click "Load Unpacked"** → select the `deepsleep-hub` folder (the root, not `src/`)
+5. Done. Open any of the 8 AI platforms and start using them normally.
+
+### Verify It's Running
+Open `chrome://extensions` → find DeepSleep Hub → click **"Service Worker"** → check the console:
+```
+🧠 DeepSleep Pulse: Service Worker is active.
+```
+If you see that line, all 8 AIs are connected and memory is live.
+
+---
+
+## 🌐 Supported Platforms
+
+| AI | URL | Lobe Color |
+|---|---|---|
+| ChatGPT | chatgpt.com | ⚪ White |
+| Claude | claude.ai | 🟠 Orange |
+| Gemini | gemini.google.com | 🟣 Purple |
+| Grok | grok.com | 🔵 Cyan |
+| DeepSeek | chat.deepseek.com | 🟢 Green |
+| Perplexity | perplexity.ai | 🟡 Amber |
+| Kimi | kimi.com / kimi.moonshot.cn | 🔴 Red |
+| DeepSleep Core | — | 🟡 Gold |
+
+---
+
+## 🎯 Using Adaptive Recall
+
+- **Capture is automatic** — just use any AI normally. The 🧠 floating widget pulses green when a thought is captured.
+- **On a new chat** — DeepSleep detects the empty input and auto-injects a `[DeepSleep Recall]` block with context from your last session.
+- **Manual recall** — click the floating 🧠 icon anytime to open the memory overlay and manually inject any stored thought.
+- **Force Sync** — click "FORCE SYNC BRAIN ⚡" in the banner to manually bridge context to the current AI.
+
+---
+
+## 🧬 Visual Cortex (3D Brain)
+
+1. Click the extension icon → **"ENTER VISUAL CORTEX"**
+2. You'll see a live 3D brain with 8 lobes — one per AI
+3. **Drag** to rotate, **scroll** to zoom, **click** a node to inspect its content
+4. Each lobe grows as you use that AI more — the shape of the brain IS your usage pattern
+5. Synaptic edges light up between related concepts across different AIs
+6. Press **Space** to fire a random thought node. Press **Z** for Zen mode.
+
+---
+
+## 🛠 Troubleshooting
+
+### 🧠 widget doesn't pulse green
+The DOM selectors may not have matched yet. Try scrolling the page slightly after the AI finishes responding — this triggers the MutationObserver.
+
+### Adaptive Recall not injecting context
+- Make sure you have at least one prior conversation captured first (the DB needs something to recall).
+- Refresh the page. Some platforms (ChatGPT especially) hide the textarea on load.
+- Click the 🧠 icon manually and pick a memory from the list.
+
+### Extension fails to load (red error in chrome://extensions)
+- Make sure you're loading the **root `deepsleep-hub` folder**, not `src/` or `dist/`.
+- Remove the extension and load unpacked again.
+
+### AI ignores the recalled context
+- Confirm the `[DeepSleep Recall]` block is actually inside the text area before sending.
+- Some platforms need you to click inside the input box first before the injection registers.
+
+---
+
+## 🏗 Engineering Stack
+
+| Layer | Technology |
+|---|---|
+| Capture | `MutationObserver` + platform-specific DOM selectors |
+| Memory | `Dexie.js` IndexedDB — local graph DB with PageRank scoring |
+| Embeddings | `Transformers.js` — `all-MiniLM-L6-v2` on-device, no API key |
+| Injection | Shadow DOM isolated UI — survives platform re-renders |
+| Visualization | `Three.js` — WebGL, bloom post-processing, OrbitControls |
+| Persistence | `chrome.storage.local` — usage counts survive browser restarts |
+| Background | Chrome MV3 service worker with keep-alive alarm |
 
 ---
 
 ![DeepSleep Technical Data Architecture](docs/technical_flow.png)
 
----
-
-## 🛠 Troubleshooting: The "No-Errors" Guide
-
-### ❌ Error: "Adaptive Recall not triggering"
-**Symptoms**: No text appears in the prompt box on a new chat.
-- **Step 1**: Ensure you have at least one recent conversation captured (the 🧠 should pulse green during your previous chat).
-- **Step 2**: Refresh the page. Sometimes AI platforms (like ChatGPT) hide the input box until user interaction.
-- **Step 3**: Click the floating 🧠 icon. This "forces" the handake menu if automation is blocked.
-
-### ❌ Error: "Status 15 / File Not Found"
-**Symptoms**: Extension fails to load or shows a red error in `chrome://extensions`.
-- **Step 1**: This usually happens if you try to load the `src/` folder instead of the root. Ensure you are loading the **ENTIRE** `deepsleep-hub` directory.
-- **Step 2**: Remove the extension and click **Load Unpacked** again.
-
-### ❌ Error: "AI says it doesn't know the history"
-**Symptoms**: You hit Send, but the AI ignores the bridged context.
-- **Step 1**: Verify the `[DeepSleep Recall]` block is actually inside the text area.
-- **Step 2**: Use the **Clipboard Bridge** fallback. Click the 🧠 icon, select a memory, and wait for the **"PASTE READY"** toast. Then hit `Ctrl+V` (or `Cmd+V`) in the chat box.
-
----
-
 ![DeepSleep Cognitive Bridge Workflow](docs/cognitive_bridge.png)
-
----
-
-## 🏗 Industrial Engineering
-DeepSleep v1.0.0 is built on:
-- **TypeScript**: A type-safe, compiled core.
-- **API Interception**: Monkey-patching `window.fetch` to ignore UI changes.
-- **Shadow DOM**: UI isolation from platform re-renders.
-- **Transformers.js**: On-device semantic embeddings.
-
----
 
 ![DeepSleep User Journey](docs/user_journey.png)
