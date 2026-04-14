@@ -13,14 +13,16 @@ let nodeInjectMem = {};
 // Lobe storage
 const logicalLobes = {};
 
-// AI Color Configuration
+// AI Color Configuration — 8 platforms + DeepSleep core hub
 const AI_CONFIG = {
-  openai: { color: 0xffffff, name: 'ChatGPT' },
-  claude: { color: 0xf97316, name: 'Claude' },
-  gemini: { color: 0xa855f7, name: 'Gemini' },
-  kimi: { color: 0xef4444, name: 'Kimi' },
-  codex: { color: 0x3b82f6, name: 'Codex' },
-  deepsleep: { color: 0xfbbf24, name: 'DeepSleep', special: 'dream' }
+  openai:      { color: 0xffffff, name: 'ChatGPT' },
+  claude:      { color: 0xf97316, name: 'Claude' },
+  gemini:      { color: 0xa855f7, name: 'Gemini' },
+  grok:        { color: 0x06b6d4, name: 'Grok' },
+  deepseek:    { color: 0x22c55e, name: 'DeepSeek' },
+  perplexity:  { color: 0xf59e0b, name: 'Perplexity' },
+  kimi:        { color: 0xef4444, name: 'Kimi' },
+  deepsleep:   { color: 0xfbbf24, name: 'DeepSleep β', special: 'dream' }
 };
 
 function init() {
@@ -101,14 +103,17 @@ function init() {
 }
 
 function createBiologicalBrain() {
+  // 8 AI lobes arranged in a spherical neural cluster.
+  // Each lobe is dedicated to one AI — it GROWS as that AI is used more.
   const lobeConfigs = [
-    { name: 'frontal', color: 0xffffff, pos: [0, 8, 14], scale: 1.8, ai: 'openai' },
-    { name: 'parietal', color: 0x3b82f6, pos: [0, 14, -4], scale: 1.6, ai: 'codex' },
-    { name: 'temporal_right', color: 0xf97316, pos: [12, 2, 2], scale: 1.4, ai: 'claude' },
-    { name: 'temporal_left', color: 0xf97316, pos: [-12, 2, 2], scale: 1.4, ai: 'claude' },
-    { name: 'occipital', color: 0xa855f7, pos: [0, 4, -15], scale: 1.3, ai: 'gemini' },
-    { name: 'cerebellum', color: 0xef4444, pos: [0, -8, -10], scale: 1.1, ai: 'kimi' },
-    { name: 'core', color: 0xfbbf24, pos: [0, -1, -2], scale: 1.0, ai: 'deepsleep' }
+    { name: 'chatgpt',    color: 0xffffff, pos: [0,   8,   16],  scale: 1.8, ai: 'openai' },
+    { name: 'claude',     color: 0xf97316, pos: [14,  3,   4],   scale: 1.5, ai: 'claude' },
+    { name: 'gemini',     color: 0xa855f7, pos: [-14, 3,   4],   scale: 1.5, ai: 'gemini' },
+    { name: 'grok',       color: 0x06b6d4, pos: [10,  -6,  -8],  scale: 1.3, ai: 'grok' },
+    { name: 'deepseek',   color: 0x22c55e, pos: [-10, -6,  -8],  scale: 1.3, ai: 'deepseek' },
+    { name: 'perplexity', color: 0xf59e0b, pos: [0,   14,  -6],  scale: 1.2, ai: 'perplexity' },
+    { name: 'kimi',       color: 0xef4444, pos: [0,   -11, 8],   scale: 1.1, ai: 'kimi' },
+    { name: 'core',       color: 0xfbbf24, pos: [0,   0,   0],   scale: 0.9, ai: 'deepsleep' }
   ];
 
   lobeConfigs.forEach(config => {
@@ -162,6 +167,27 @@ function createBiologicalBrain() {
       logicalLobes[config.ai] = [lobe];
     } else {
       logicalLobes[config.ai].push(lobe);
+    }
+  });
+}
+
+// Called whenever a new thought is captured for an AI.
+// usageCount is cumulative — lobe grows up to 2.5x its initial size.
+function growLobe(ai, usageCount) {
+  const lobes = logicalLobes[ai];
+  if (!lobes || lobes.length === 0) return;
+  const growthMultiplier = 1 + Math.min(usageCount * 0.025, 1.5);
+  lobes.forEach(lobe => {
+    const initial = lobe.userData.scaleBase;
+    const target = initial * growthMultiplier;
+    gsapAnimation(lobe.scale, { x: target, y: target, z: target }, 1.2, 'power2.out');
+    // Pulse emissive to signal growth
+    gsapAnimation(lobe.material, { emissiveIntensity: 0.9 }, 0.3, 'power2.out');
+    setTimeout(() => gsapAnimation(lobe.material, { emissiveIntensity: 0.25 }, 1.0, 'power2.out'), 400);
+    // Update label to show usage count
+    if (lobe.userData.macroLabel) {
+      const aiName = AI_CONFIG[ai]?.name || ai;
+      lobe.userData.macroLabel.innerText = `${aiName} ×${usageCount}`;
     }
   });
 }
@@ -612,10 +638,17 @@ async function loadRealKnowledge() {
       const thoughts = data.nodes;
       if (!thoughts || thoughts.length === 0) {
         console.log('Local real database is empty. Seeding neural mesh.');
-        createThoughtNode('deepsleep', 'Neural mesh initialized. DB is currently empty. Open an LLM chat to begin tracking.', 'Core Initialization');
-        setTimeout(() => createThoughtNode('openai', 'Awaiting GPT-4 context stream...', 'Context Scout'), 400);
-        setTimeout(() => createThoughtNode('claude', 'Awaiting Claude semantic bridge...', 'Bridge Scout'), 800);
-        setTimeout(() => createThoughtNode('gemini', 'Awaiting Google Multimodal indexing...', 'Index Scout'), 1200);
+        const seeds = [
+          ['deepsleep',  'Neural hub active. Open any AI chat to start building your second brain.', 'Core Hub'],
+          ['openai',     'Awaiting ChatGPT context stream...', 'GPT Scout'],
+          ['claude',     'Awaiting Claude semantic bridge...', 'Bridge Scout'],
+          ['gemini',     'Awaiting Gemini multimodal indexing...', 'Gemini Scout'],
+          ['grok',       'Awaiting Grok real-time feed...', 'Grok Scout'],
+          ['deepseek',   'Awaiting DeepSeek reasoning trace...', 'DeepSeek Scout'],
+          ['perplexity', 'Awaiting Perplexity search thread...', 'Perplexity Scout'],
+          ['kimi',       'Awaiting Kimi context stream...', 'Kimi Scout'],
+        ];
+        seeds.forEach(([ai, text, concept], i) => setTimeout(() => createThoughtNode(ai, text, concept), i * 300));
       } else {
         console.log('Restoring', thoughts.length, 'real structured thoughts from the graph DB!');
         thoughts.forEach((t, i) => {
@@ -638,17 +671,37 @@ if (document.readyState === 'loading') document.addEventListener('DOMContentLoad
 else init();
 
 if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === 'NEW_THOUGHT' && isInitialized) {
+  chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+    if (!isInitialized) return;
+
+    if (request.type === 'NEW_THOUGHT') {
       const conceptStr = request.concepts ? request.concepts.map(c => c.name).join(', ') : request.text.substring(0, 20);
       createThoughtNode(request.ai, request.text, conceptStr);
+      // Grow that AI's lobe based on cumulative usage
+      if (request.usageCount !== undefined) growLobe(request.ai, request.usageCount);
       sendResponse({ success: true });
     }
+
+    if (request.type === 'RESTORE_GROWTH' && request.aiUsageCounts) {
+      Object.entries(request.aiUsageCounts).forEach(([ai, count]) => growLobe(ai, count));
+    }
   });
+
+  // Ask background to restore all lobe sizes on first load
+  setTimeout(() => {
+    chrome.runtime.sendMessage({ type: 'GET_USAGE_COUNTS' }, (resp) => {
+      if (resp?.aiUsageCounts) {
+        Object.entries(resp.aiUsageCounts).forEach(([ai, count]) => growLobe(ai, count));
+      }
+    });
+  }, 1500);
 }
+
 window._handleExtMsg = (request) => {
-  if (request.type === 'NEW_THOUGHT' && isInitialized) {
+  if (!isInitialized) return;
+  if (request.type === 'NEW_THOUGHT') {
     const conceptStr = request.concepts ? request.concepts.map(c => c.name).join(', ') : request.text.substring(0, 20);
     createThoughtNode(request.ai, request.text, conceptStr);
+    if (request.usageCount !== undefined) growLobe(request.ai, request.usageCount);
   }
 };

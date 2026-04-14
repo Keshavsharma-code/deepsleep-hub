@@ -1,107 +1,116 @@
-import { ChatGPTAdapter, ClaudeAdapter, KimiAdapter } from './adapters/index.js';
-const TRANSFORMERS_CDN = 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
-class BackgroundEngine {
-    MAX_NEURONS = 100;
-    adapters = [
-        new ChatGPTAdapter(),
-        new ClaudeAdapter(),
-        new KimiAdapter()
-    ];
-    embedder = null;
-    constructor() {
-        this.init();
+importScripts('lib/dexie.min.js', 'db.js', 'extractor.js');
+
+// Access shared globals from importScripts
+const { GraphDB } = self;
+const { KnowledgeExtractor } = self;
+
+// Keep-alive heartbeat (MV3 Service Worker persistence)
+chrome.alarms.create('deepsleep_pulse', { periodInMinutes: 4.5 });
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === 'deepsleep_pulse') {
+    console.log('🧠 DeepSleep Pulse: Service Worker is active.');
+  }
+});
+
+chrome.runtime?.onMessage?.addListener((request, _sender, sendResponse) => {
+  if (request.type === 'CAPTURE_THOUGHT') {
+    processThoughtAsync(request.ai, request.content, request.fullLog)
+      .then(usageCount => sendResponse({ success: true, usageCount }))
+      .catch(err => {
+        console.error('[Background] Capture failed:', err);
+        sendResponse({ success: false, error: err.message });
+      });
+    return true;
+  }
+
+  if (request.type === 'GET_RECENT_THOUGHTS') {
+    GraphDB.getAllData()
+      .then(data => {
+        const sorted = data.nodes.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
+        sendResponse({ success: true, thoughts: sorted });
+      })
+      .catch(err => sendResponse({ success: false, error: err.message }));
+    return true;
+  }
+
+  if (request.type === 'GET_USAGE_COUNTS') {
+    chrome.storage.local.get('aiUsageCounts', (result) => {
+      sendResponse({ success: true, aiUsageCounts: result.aiUsageCounts || {} });
+    });
+    return true;
+  }
+});
+
+async function processThoughtAsync(ai, content, fullLog) {
+  // Increment per-AI usage count (persisted — drives lobe growth)
+  const stored = await chrome.storage.local.get('aiUsageCounts');
+  const aiUsageCounts = stored.aiUsageCounts || {};
+  aiUsageCounts[ai] = (aiUsageCounts[ai] || 0) + 1;
+  await chrome.storage.local.set({ aiUsageCounts });
+  const usageCount = aiUsageCounts[ai];
+
+  // Extract Concepts and Relationships
+  const { concepts, relationships } = KnowledgeExtractor.extractPatterns(content);
+
+  if (concepts.length > 0) {
+    const dbConceptIds = {};
+
+    for (const c of concepts) {
+      if (!dbConceptIds[c.name]) {
+        const vector = await KnowledgeExtractor.embed(c.name);
+        dbConceptIds[c.name] = await GraphDB.addConcept(c.name, ai, vector);
+        c.dbId = dbConceptIds[c.name];
+      } else {
+        c.dbId = dbConceptIds[c.name];
+      }
     }
-    async init() {
-        console.log('🧠 [DeepSleep 1.0.0] Cognitive Engine Online.');
-        this.initEmbedder();
-        chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-            this.handleMessage(message, sender, sendResponse);
-            return true;
-        });
+
+    for (const r of relationships) {
+      const sourceConcept = concepts.find(c => c.id === r.source);
+      const targetConcept = concepts.find(c => c.id === r.target);
+      if (sourceConcept?.dbId && targetConcept?.dbId) {
+        r.dbId = await GraphDB.addRelationship(sourceConcept.dbId, targetConcept.dbId, r.type, content);
+        r.sourceDbId = sourceConcept.dbId;
+        r.targetDbId = targetConcept.dbId;
+      }
     }
-    async initEmbedder() {
-        try {
-            const { pipeline, env } = await import(TRANSFORMERS_CDN);
-            env.allowLocalModels = false;
-            this.embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-            console.log('🚀 [DeepSleep] Semantic Engine Primed.');
-        }
-        catch (e) {
-            console.error('❌ [DeepSleep] Failed to load Semantic Engine:', e);
-        }
-    }
-    async handleMessage(message, sender, sendResponse) {
-        if (message.type === 'CAPTURE_THOUGHT') {
-            await this.saveThought(message.ai, message.content, sender);
-            sendResponse({ success: true });
-        }
-        else if (message.type === 'API_DATA_CAPTURED') {
-            await this.processApiCapture(message.url, message.payload, sender);
-            sendResponse({ success: true });
-        }
-        else if (message.type === 'GET_RECENT_THOUGHTS') {
-            const memories = await this.getMemories();
-            sendResponse({ success: true, thoughts: memories });
-        }
-    }
-    async processApiCapture(url, payload, sender) {
-        let content = null;
-        let ai = 'unknown';
-        for (const adapter of this.adapters) {
-            if (url.includes(adapter.name)) {
-                ai = adapter.name;
-                content = adapter.extractConversation(payload);
-                break;
-            }
-        }
-        if (content && content.length > 30) {
-            await this.saveThought(ai, content, sender, payload);
-        }
-    }
-    async getMemories() {
-        return new Promise((resolve) => {
-            chrome.storage.local.get(['memories'], (result) => {
-                const data = result;
-                resolve(data.memories || []);
-            });
-        });
-    }
-    async saveThought(ai, content, sender, rawJson = null) {
-        const thoughts = await this.getMemories();
-        let vector = undefined;
-        if (this.embedder) {
-            const output = await this.embedder(content, { pooling: 'mean', normalize: true });
-            vector = Array.from(output.data);
-        }
-        const newThought = {
-            id: crypto.randomUUID(),
-            aiSource: ai,
-            content: content,
-            timestamp: Date.now(),
-            metadata: {
-                url: sender.url || '',
-                title: sender.tab?.title || '',
-                confidence: 1.0
-            },
-            color: this.getAIColor(ai),
-            rawJson: rawJson,
-            vector: vector
-        };
-        thoughts.unshift(newThought);
-        if (thoughts.length > this.MAX_NEURONS)
-            thoughts.pop();
-        await chrome.storage.local.set({ memories: thoughts });
-        console.log(`[DeepSleep] Saved semantic thought from ${ai}`);
-    }
-    getAIColor(ai) {
-        const colors = {
-            chatgpt: '#10b981',
-            claude: '#d97706',
-            gemini: '#3b82f6',
-            kimi: '#8b5cf6',
-            grok: '#f1f5f9'
-        };
-        return colors[ai] || '#64748b';
-    }
+
+    await GraphDB.calculateImportance();
+  }
+
+  // Notify any open brain UI — include usageCount so the lobe can grow
+  chrome.tabs.query({ url: chrome.runtime.getURL('brain.html') + '*' }, (tabs) => {
+    tabs.forEach(tab => {
+      chrome.tabs.sendMessage(tab.id, {
+        type: 'NEW_THOUGHT',
+        ai,
+        text: content,
+        concepts,
+        relationships,
+        usageCount
+      }).catch(() => {});
+    });
+  });
+
+  return usageCount;
 }
-new BackgroundEngine();
+
+// Reconnection logic for content scripts after update
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.tabs.query({ url: [
+      '*://chatgpt.com/*', '*://claude.ai/*', '*://gemini.google.com/*',
+      '*://grok.com/*', '*://chat.deepseek.com/*', '*://perplexity.ai/*',
+      '*://www.kimi.com/*', '*://kimi.moonshot.cn/*'
+    ] }, (tabs) => {
+        tabs.forEach(tab => {
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                func: () => {
+                    console.log('[DeepSleep] Extension updated. Reconnecting observers...');
+                    window.location.reload();
+                }
+            }).catch(e => console.warn('[Background] Auto-reload failed for tab:', tab.id, e));
+        });
+    });
+});

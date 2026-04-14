@@ -1,27 +1,33 @@
-# DeepSleep-Hub (v1.0.0 THE MASTER BUILD) 🚀🧠
+# DeepSleep-Hub (v2.0.0 — THE OMNIBRAIN BUILD) 🚀🧠
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/Version-1.0.0--Engineering-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
+[![Version](https://img.shields.io/badge/Version-2.0.0--OmniBrain-blue.svg)](https://github.com/Keshavsharma-code/deepsleep-hub/releases)
 [![Stable](https://img.shields.io/badge/Stability-Industrial-orange.svg)](https://github.com/Keshavsharma-code/deepsleep-hub)
 [![Engine](https://img.shields.io/badge/Engine-TypeScript-lightgrey.svg)](https://www.typescriptlang.org/)
+[![AIs](https://img.shields.io/badge/AIs_Connected-8-purple.svg)](https://github.com/Keshavsharma-code/deepsleep-hub)
 
 ![The Neural Cortex](docs/visual_brain.png)
 
-## 🌌 The Universal AI Memory Bridge
-**DeepSleep Hub** is a production-grade cognitive layer that bridges the gap between Cloud AI (ChatGPT, Kimi, Claude, Gemini) and your local project memory. It is the first extension to move beyond fragile DOM scraping into **Stable API Interception**.
+## 🌌 The Universal AI Memory Bridge — 8 AIs, One Brain
+**DeepSleep Hub** is a production-grade cognitive layer connecting **ChatGPT, Claude, Gemini, Grok, DeepSeek, Perplexity, and Kimi** through a shared local memory graph. No AI ever forgets what another one learned.
+
+> The 3D brain **literally grows** — each AI's lobe expands in real-time as you use that platform more.
 
 ---
 
 ### 🔗 The DeepSleep Ecosystem
-*   **[DeepSleep-beta](https://github.com/Keshavsharma-code/DeepSleep-beta)**: Our terminal-based sibling. A high-speed background agent for local dev project memory and idle-time "dreaming."
+
+> **Try [DeepSleep-beta](https://github.com/Keshavsharma-code/DeepSleep-beta) — our terminal-based companion agent.**
+> A high-speed background daemon for local dev project memory and idle-time "dreaming." Run it alongside DeepSleep Hub for full local + browser AI memory coverage.
 
 ---
 
 ## 💡 Why DeepSleep? (The Use Cases)
 
-1. **Context Continuity**: You were chatting with Claude about a complex React bug. You want to switch to ChatGPT for a second opinion. DeepSleep bridges the context instantly—no copy-pasting required.
-2. **Project Memory**: DeepSleep remembers what you discussed 3 chats ago. It creates a seamless "Second Brain" for your AI interactions.
-3. **Multi-Model Intelligence**: Bridge the speed of Grok with the reasoning of GPT-4o and the creative depth of Claude 3.5 Sonnet.
-4. **Offline Preservation**: Your conversations are vectorized and stored locally. You own your data.
+1. **Context Continuity**: Chatting with Claude about a complex bug? Switch to ChatGPT or DeepSeek for a second opinion. DeepSleep bridges the context instantly — no copy-pasting.
+2. **8-Platform Memory**: ChatGPT, Claude, Gemini, Grok, DeepSeek, Perplexity, Kimi — all sharing a single local knowledge graph. No AI forgets what another one learned.
+3. **Living 3D Brain**: Your Visual Cortex is a real-time 3D brain where each AI has its own lobe. The more you use an AI, the bigger its lobe grows.
+4. **Multi-Model Intelligence**: Combine Grok's real-time search, GPT-4o's reasoning, Claude's depth, and DeepSeek's analysis — with one shared memory.
+5. **Offline Preservation**: Your conversations are vectorized and stored locally via IndexedDB. You own your data. No cloud. No tracking.
 
 ---
 
@@ -35,7 +41,7 @@
 5. **Load**: Click **Load Unpacked** and select the `deepsleep-hub` folder.
 
 ### 2. Using Adaptive Recall (The Handshake)
-- **Automatic Capture**: Simply use ChatGPT, Claude, or Gemini as normal. DeepSleep **intercepts the network traffic** silently.
+- **Automatic Capture**: Simply use any of the 8 supported AIs as normal. DeepSleep **intercepts the network traffic** silently.
 - **Visual Pulse**: The floating 🧠 will **Pulse Green** when it successfully captures an API event.
 - **Automatic Bridge**: Open a new chat. DeepSleep will detect the empty chat box and automatically prepare the **Adaptive Recall** handshake.
 - **The Delimiter**: You will see a `[DeepSleep Recall]` block appear in your prompt box. Just hit **Enter** to bridge the context.

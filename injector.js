@@ -5,13 +5,15 @@
     console.log(`🧠 [DeepSleep ${DS_VERSION}] Initializing Shadow DOM Guardian...`);
 
     const PLATFORM_SELECTORS = {
-        chatgpt: '#prompt-textarea, [data-testid="chatgpt-prompt-textarea"], [role="textbox"][aria-label*="ChatGPT"]',
-        claude: 'div[contenteditable="true"][aria-label*="Claude"], .ProseMirror, [role="textbox"][aria-label*="Claude"]',
-        gemini: 'div[contenteditable="true"][aria-label*="Gemini"], .ql-editor',
-        kimi: '.chat-input-editor[role="textbox"], div[contenteditable="true"][aria-label*="Kimi"], .input-box textarea',
-        grok: 'textarea[placeholder*="Grok"], [role="textbox"][aria-label*="Grok"], .public-DraftEditor-content',
-        local: '[role="textbox"], textarea.textarea, .chat-input textarea',
-        generic: '[role="textbox"], [contenteditable="true"], textarea'
+        chatgpt:    '#prompt-textarea, [data-testid="chatgpt-prompt-textarea"], textarea[placeholder*="ChatGPT"]',
+        claude:     'div[contenteditable="true"].ProseMirror, [aria-label*="Write your prompt"], .ProseMirror[contenteditable="true"]',
+        gemini:     'div[contenteditable="true"][aria-label*="Enter a prompt"], .ql-editor, rich-textarea div[contenteditable="true"]',
+        grok:       'textarea[aria-label*="Ask"], textarea[placeholder*="Ask"], .public-DraftEditor-content[contenteditable="true"]',
+        deepseek:   '#chat-input, textarea[placeholder*="Send"], div[contenteditable="true"][data-placeholder*="Send"]',
+        perplexity: 'textarea[placeholder*="Ask"], textarea[aria-label*="Ask"], div[contenteditable="true"][aria-label*="Ask"]',
+        kimi:       'div[contenteditable="true"][class*="editor"], textarea[class*="input"], .chat-input-editor',
+        local:      '[role="textbox"], textarea.textarea, .chat-input textarea',
+        generic:    '[role="textbox"], [contenteditable="true"]:not([class*="message"]):not([class*="response"]), textarea'
     };
 
     class DeepSleepShadow {
@@ -141,7 +143,10 @@
         }
 
         async autoRecall() {
-            const isNewChat = document.querySelectorAll('[data-message-author-role], .message, .chat-line').length === 0;
+            const isNewChat = document.querySelectorAll(
+              '[data-message-author-role], .message, .chat-line, ' +
+              '.ds-message-content, [class*="message-content"], [class*="chat-message"]'
+            ).length === 0;
             if (isNewChat) {
                 chrome.runtime.sendMessage({ type: 'GET_RECENT_THOUGHTS' }, (response) => {
                     if (response?.success && response.thoughts?.[0]) {

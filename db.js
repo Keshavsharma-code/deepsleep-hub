@@ -56,12 +56,14 @@ const getDB = () => {
 };
 
 const AI_COLORS = {
-  openai: '#ffffff',
-  codex: '#3b82f6',
-  claude: '#f97316',
-  gemini: '#a855f7',
-  kimi: '#ef4444',
-  deepsleep_beta: '#fbbf24'
+  openai:     '#ffffff',
+  claude:     '#f97316',
+  gemini:     '#a855f7',
+  grok:       '#06b6d4',
+  deepseek:   '#22c55e',
+  perplexity: '#f59e0b',
+  kimi:       '#ef4444',
+  deepsleep:  '#fbbf24'
 };
 
 function cosineSimilarity(a, b) {
